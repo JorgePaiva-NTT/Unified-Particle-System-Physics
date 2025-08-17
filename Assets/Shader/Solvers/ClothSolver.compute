@@ -1,0 +1,473 @@
+struct ClothData {
+    uint bodyId;
+    
+    int startIndex;
+    int endIndex;
+    
+    float RestLengthHoriz;
+    float RestLengthVert;
+    float RestLengthDiag;
+    
+    uint vertexColumn;
+    uint vertexRow;
+    
+    float structualConstraint;
+    float shearConstraint;
+    float structualConstraint1;
+    float shearConstraint1;
+};
+
+//uniform variables for calculating CellID, AKA hash value
+ float HashScale;
+ float3 HashSize;
+ float3 HashTranslate;
+ 
+ //the position where the explosion should be 
+ float3 blastPoint;
+ 
+ //the index map and start/end index table for particles
+ RWStructuredBuffer<int2> IndexMap;
+ RWStructuredBuffer<int2> Table;
+ 
+ //hash function
+ int3 HashIndex(float3 p)
+ {
+ 	p = (p - HashTranslate) * HashScale;
+ 	return clamp(p, 0, HashSize - 1);
+ }
+
+//unrolling loop Macro
+#define LOOP_START \
+[unroll] \
+for (int k = -1; k <= 1; k++) \
+{ \
+[unroll] \
+for (int j = -1; j <= 1; j++) \
+{ \
+[unroll] \
+for (int i = -1; i <= 1; i++) \
+{ \
+
+#define LOOP_END \
+} } } \
+
+//the boundary particle buffer
+StructuredBuffer<float4> Boundary;
+
+
+RWStructuredBuffer<ClothData> clothData;
+
+//several constants for the simulation
+float3 Gravity;
+float4 ExeternalForce;
+float SpringK;
+float DampingConst;
+float DeltaT;
+float DeltaT2;
+float nodeMass;
+float damping;
+static float tangentialDamp = 7.0f;
+
+int NumParticles;
+
+int clothId;
+
+Buffer<int> phase;
+
+//the position buffer
+RWStructuredBuffer<float4> Positions;
+
+//read and write buffer for predicted position, used for double buffer calculation
+RWStructuredBuffer<float4> PredictedREAD;
+RWStructuredBuffer<float4> PredictedWRITE;
+//read and write buffer for velocities
+StructuredBuffer<float4> VelocitiesREAD;
+RWStructuredBuffer<float4> VelocitiesWRITE;
+
+//buffer for densities and pressures of all particles
+RWStructuredBuffer<float> Densities;
+RWStructuredBuffer<float> Pressures;
+float Kden;
+
+#define THREADS 128
+
+#pragma kernel Setup
+[numthreads(THREADS, 1, 1)]
+void Setup(int id : SV_DispatchThreadID) {
+
+    ClothData data = clothData[clothId];  
+    int nid = id + data.startIndex; 
+
+    Densities[nid] = 1000.0f;
+    Pressures[nid] = 10.0f;
+}
+
+float3 Velocity(int i)
+{
+	float3 velocity = VelocitiesREAD[i].xyz;
+	velocity -= velocity * damping * DeltaT;
+	velocity += DeltaT * Gravity;
+	return velocity;
+}
+
+float3 PredictedPosition(int i, float3 velocity)
+{
+	return Positions[i].xyz + DeltaT * velocity;
+}
+
+
+#pragma kernel PredictPositions
+[numthreads(THREADS, 1, 1)]
+void PredictPositions(int id : SV_DispatchThreadID) {
+    ClothData data = clothData[clothId];  
+    int nid = id;//+ data.startIndex; 
+    
+    if (phase[nid] != clothId)
+        return;
+    
+    if (nid < NumParticles)
+	{
+        uint vertexColumn = data.vertexColumn;
+        uint vertexRow = data.vertexRow;
+        if (nid == data.startIndex 
+            || nid == data.startIndex + vertexColumn - 1 
+            //|| nid == data.startIndex + (vertexColumn * vertexRow) - 1 
+            //|| nid == data.startIndex + (vertexColumn * vertexRow) - vertexRow
+            ) {
+            return;
+        }
+		float3 velocity = Velocity(nid);
+		float3 predicted = PredictedPosition(nid, velocity);
+
+		VelocitiesWRITE[nid] = float4(velocity, 0);
+		PredictedWRITE[nid] = float4(predicted, 0);
+	}
+}
+
+
+float3 solveCollisions(float3 pi, float3 vi, float radius) { 
+    return float3(0,0,0);
+}
+
+
+#pragma kernel SolveCollisions
+[numthreads(THREADS, 1, 1)]
+void SolveCollisions(int id : SV_DispatchThreadID) { }
+
+//the kernel that updates velocities according to the change of positions
+#pragma kernel UpdateVelocities
+[numthreads(THREADS, 1, 1)]
+void UpdateVelocities(int id : SV_DispatchThreadID)
+{
+    ClothData data = clothData[clothId];
+
+    if (phase[id] != clothId)
+        return;
+       
+    int nid = id;// + data.startIndex;
+       
+    uint vertexColumn = data.vertexColumn;
+    uint vertexRow = data.vertexRow;
+    if (nid == data.startIndex || nid == data.startIndex + vertexColumn - 1 
+        //|| nid == data.startIndex + (vertexColumn * vertexRow) - 1 
+        //|| nid == data.startIndex + (vertexColumn * vertexRow) - vertexRow 
+        ) {
+        return;
+    }
+        
+	if (nid < NumParticles)
+	{
+		float4 p = Positions[nid];
+		float4 pi = PredictedREAD[nid];
+
+		float4 velocity = (pi - p) / DeltaT;
+
+		VelocitiesWRITE[nid] = velocity;
+	}
+}
+
+#pragma kernel UpdatePositions
+[numthreads(THREADS, 1, 1)]
+void UpdatePositions(int id : SV_DispatchThreadID)
+{
+    ClothData data = clothData[clothId];
+   
+    if (phase[id] != clothId)
+        return;
+
+    int nid = id;//+ data.startIndex;
+
+    uint vertexColumn = data.vertexColumn;
+    uint vertexRow = data.vertexRow;
+    if (nid == data.startIndex || nid == data.startIndex + vertexColumn - 1 
+        //|| nid == data.startIndex + (vertexColumn * vertexRow) - 1 
+        //|| nid == data.startIndex + (vertexColumn * vertexRow) - vertexRow 
+        ) {
+        return;
+    }
+
+	if (nid < NumParticles) {
+		Positions[nid] = PredictedREAD[nid];
+	}
+}
+
+
+float3 SolveSpringForce(
+    float3 force, 
+    float3 p, float3 v, 
+    float3 oPos, float3 oVel, 
+    float restLength) 
+{
+    float3 resultForce = float3(0,0,0);
+    
+    float3 delP = oPos - p; //position dx //force Direction 
+    float dist = length(delP);
+    float3 delV = oVel - v;
+    
+    float3 norm = normalize(delP);
+    float3 tanVel = delV - (dot(delV, norm) * norm);
+    
+    float3 norDx = delP / dist;
+    float s = SpringK * (dist - restLength);
+    float d = dot((delV), delP) / dist * DampingConst;
+    
+    resultForce += (s + d)*norDx;
+    resultForce += tangentialDamp*tanVel;
+    
+    return resultForce;
+}
+
+
+#pragma kernel NodeUpdate
+[numthreads(8, 8, 1)]
+void NodeUpdate(uint3 id : SV_DispatchThreadID)
+{   
+    ClothData data = clothData[clothId];
+    uint vertexColumn = data.vertexColumn;
+    uint vertexRow = data.vertexRow;
+    uint idx = mad(id.y, vertexColumn, id.x) + data.startIndex;
+    
+    if (phase[idx] != clothId)
+        return;
+    
+    const uint3 nParticles = uint3(vertexColumn, vertexRow, 1);
+	
+    const float3 p = float3(Positions[idx].xyz);
+    const float3 v = float3(VelocitiesREAD[idx].xyz);
+    float3 force = float3(0,0,0);
+    
+    float RestLengthHoriz = data.RestLengthHoriz;
+    float RestLengthVert = data.RestLengthVert;
+    float RestLengthDiag = data.RestLengthDiag;
+    
+    if (idx == data.startIndex 
+        || idx == data.startIndex + vertexColumn - 1 
+        //|| idx == data.startIndex + (vertexColumn * vertexRow) - 1 
+        //|| idx == data.startIndex + (vertexColumn * vertexRow) - vertexRow
+        ) {
+        return;
+    }
+    
+    // Top
+    if (id.y < nParticles.y - (uint) 1)
+    {
+        uint requestedId = idx + nParticles.x;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+        
+            force += SolveSpringForce(force, p, v, 
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthVert);
+            /*
+            delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthVert);
+            d = dot((delV), delP) / dist * DampingConst;
+            
+            force += (s + d)*norDx;
+            force += tangentialDamp*tanVel;*/
+            
+        }
+    }
+	// Below
+    if (id.y > (uint) 0)
+    {
+        uint requestedId = idx - nParticles.x;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v,  
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthVert);
+            /*delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthVert);
+            d = dot((delV), delP) / dist*DampingConst;
+            
+            force += (s + d)*norDx;
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+	// Left
+    if (id.x > (uint) 0)
+    {
+        uint requestedId = idx - (uint) 1;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v,  
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthHoriz);
+            /*delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthHoriz);
+            d = dot((delV), delP) / dist*DampingConst;
+            
+            force += (s + d)*norDx;
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+	// Right
+    if (id.x < nParticles.x - (uint) 1)
+    {
+        uint requestedId = idx + (uint) 1;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v, 
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthHoriz);
+            /*delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthHoriz);
+            d = dot((delV), delP) / dist*DampingConst;
+            
+            force += (s + d)*norDx;	
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+
+	// Diagonals
+	// Upper-left
+    if (id.x > (uint) 0 && id.y < nParticles.y - (uint) 1)
+    {
+        uint requestedId = idx + nParticles.x - (uint) 1;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v, 
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+            /*
+            delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthDiag);
+            d = dot((delV), delP) / dist*DampingConst;
+            
+            force += (s + d)*norDx;		
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+	// Upper-right
+    if (id.x < nParticles.x - (uint) 1 && id.y < nParticles.y - (uint) 1)
+    {
+        uint requestedId = idx + nParticles.x + (uint) 1;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v, 
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+            /*
+            delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthDiag);
+            d = dot((delV), delP) / dist*DampingConst;
+            
+            force += (s + d)*norDx;		
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+	// lower -left
+    if (id.x > (uint) 0 && id.y > (uint) 0)
+    {
+        uint requestedId = idx - nParticles.x - (uint) 1;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v, 
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+            
+            /*
+            delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            s = SpringK * (dist - RestLengthDiag);
+            d = dot((delV), delP) / dist*DampingConst;
+            
+            force += (s + d)*norDx;	
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+	// lower-right
+    if (id.x < nParticles.x - (uint) 1 && id.y > (uint) 0)
+    {
+        uint requestedId = idx - nParticles.x + (uint) 1;
+        if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
+            force += SolveSpringForce(force, p, v, 
+                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+            /*
+            delP = Positions[requestedId].xyz - p; //position dx //force Direction 
+            dist = length(delP);
+            delV = (VelocitiesREAD[requestedId].xyz - v);
+            
+            float3 norm = normalize(delP);
+            float3 tanVel = delV - (dot(delV, norm) * norm);
+            
+            norDx = delP / dist;
+            
+            s = SpringK * (dist - RestLengthDiag);
+            d = dot((delV), delP) / (dist*DampingConst);
+            
+            force += (s + d)*norDx;	
+            force += tangentialDamp*tanVel;*/
+        }
+    }
+	float3 a = (force / nodeMass);
+	float4 newVel = float4(v + a * DeltaT, 0.0f);
+    VelocitiesWRITE[idx] = newVel;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    
+    float3 K1_Pos = newVel.xyz;
+    float3 K2_Pos = ((0.5f * DeltaT) * K1_Pos) * DeltaT;
+    float3 K3_Pos = ((0.5f * DeltaT) * K2_Pos) * DeltaT;
+    float3 K4_Pos = (p + (DeltaT * K3_Pos)) * DeltaT;
+    
+    // Write new step
+    float deformationSpeed = 0.16;
+    PredictedWRITE[idx] = float4(p + (deformationSpeed * (newVel.xyz + 2 * (K2_Pos + K3_Pos) + K4_Pos)) * DeltaT, 0.015625);
+    
+    // Update prevPosition
+    PredictedREAD[idx] = float4(p, 0.015625);
+}

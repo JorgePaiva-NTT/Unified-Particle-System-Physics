@@ -1,0 +1,7 @@
+﻿#ifndef _PARTICLE_COMPUTE_DEFINES_INCLUDED_
+#define _PARTICLE_COMPUTE_DEFINES_INCLUDED_
+
+#define USE_TEX
+#undef USE_TEX
+
+#endif

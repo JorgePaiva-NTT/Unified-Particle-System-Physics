@@ -1,0 +1,1436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="444efcb7-7572-48de-9d8b-ec487e66dd7d" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>ParticleMass</find>
+      <find>NumParticles</find>
+      <find>phase[id] !=</find>
+      <find>#pragma kernel</find>
+      <find>data.startIndex +</find>
+      <find>data.startIndex + id</find>
+      <find>phase</find>
+      <find>p</find>
+      <find>HashIndex</find>
+      <find>Length2</find>
+      <find>Boundary</find>
+      <find>CreateParticlesFromBounds</find>
+      <find>diff</find>
+      <find>HashSize</find>
+      <find>Table</find>
+      <find>fusion_FluidBoundary</find>
+      <find>Groups</find>
+      <find>Densities</find>
+      <find>clothBodies</find>
+      <find>density</find>
+      <find>K2_Pos</find>
+      <find>radius</find>
+      <find>mass</find>
+      <find>SolveSpringForce</find>
+      <find>deformationSpeed</find>
+      <find>nid</find>
+      <find>id</find>
+      <find>size</find>
+      <find>idx</find>
+      <find>tangentialDamp</find>
+    </findStrings>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/028e4d71153d4ed5ac6bee0dfc08aa3b117200/8a/3e3e427a/Mesh.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Resources/FluidSolver.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/GPUParticleSystem.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/BodyController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidBody.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Solvers/ClothSolver.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/028e4d71153d4ed5ac6bee0dfc08aa3b117200/be/71ef36c4/CommandBuffer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SmoothMouseLook.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/BitonicMergeSort.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/028e4d71153d4ed5ac6bee0dfc08aa3b117200/f5/ae3be2d7/Graphics.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/DisposableBuffer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/ShaderUtil.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUBody.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUCloth.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUBodyController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUParticleSystem.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUClothConstraint.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/HUDFPS.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CameraControl.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/Utils.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CPU/STDUtils.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/SystemDecl.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ClothBody.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/Cloth.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidBoundary.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ClothSolver.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/BitonicMergeSort.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/InstaceSurfaceShader.shader" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidSolverN.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ParticleBounds.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Particle.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ISolver.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/Solver.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Common.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Debug.shader" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ParticleSource.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Grid/HashGrid.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Sorting/BitonicSort.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/System.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/SmoothingKernel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Common/Kernels.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Body.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Common/Defines.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Common/Random.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Resources/BitonicSort.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Common/Math.cginc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Resources/GridHash.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Shader/Resources/FluidBoundary.compute" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/ParticleSystemEditor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/EditorExtension.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/Shader/Solvers/ClothSolver.cginc" />
+        <option value="$PROJECT_DIR$/Assets/Editor/ParticleSystemEditor.cs" />
+        <option value="$PROJECT_DIR$/Assets/Shader/Common.cginc" />
+        <option value="$PROJECT_DIR$/Assets/Shader/System.compute" />
+        <option value="$PROJECT_DIR$/Assets/Shader/Solvers/FluidSolver.compute" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Cloth.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/FluidSolver.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ParticleSource.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ParticleBounds.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/CPU/STDUtils.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/SmoothingKernel.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/Cloth.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/Solver.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Sorting/BitonicSort.cs" />
+        <option value="$PROJECT_DIR$/Assets/Shader/Resources/GridHash.compute" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Grid/HashGrid.cs" />
+        <option value="$PROJECT_DIR$/Assets/SmoothMouseLook.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Body.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidBoundary.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/BodyController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Shader/InstaceSurfaceShader.shader" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidSolverN.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ClothSolver.cs" />
+        <option value="$PROJECT_DIR$/Assets/Shader/Resources/FluidSolver.compute" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ClothBody.cs" />
+        <option value="$PROJECT_DIR$/Assets/Shader/Solvers/ClothSolver.compute" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/GPUParticleSystem.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidBody.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="1602" />
+    <option name="y" value="456" />
+    <option name="width" value="1467" />
+    <option name="height" value="1542" />
+  </component>
+  <component name="ProjectId" id="26WR4WQcQTmhLl2aBNc1y0cDAH7" />
+  <component name="ProjectView">
+    <navigator currentView="UnityExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="AssemblyExplorer" />
+      <pane id="FileSystemExplorer" />
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+      <pane id="UnityExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Scripts" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Scripts" type="1045f7f1:UnityExplorerNode" />
+              <item name="GPU" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Scripts" type="1045f7f1:UnityExplorerNode" />
+              <item name="GPU" type="1045f7f1:UnityExplorerNode" />
+              <item name="Fluids" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Shader" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Shader" type="1045f7f1:UnityExplorerNode" />
+              <item name="Common" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Shader" type="1045f7f1:UnityExplorerNode" />
+              <item name="Resources" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="e068e287:UnityExplorerRootNode" />
+              <item name="Assets" type="8711f2a6:AssetsRoot" />
+              <item name="Shader" type="1045f7f1:UnityExplorerNode" />
+              <item name="Solvers" type="1045f7f1:UnityExplorerNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-hidden-items" value="false" />
+        <option name="show-project-names" value="true" />
+      </pane>
+    </panes>
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\jorgepaiva\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\jorgepaiva\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\jorgepaiva\\AppData\\Local\\Symbols\\src&quot;
+    ]
+  }
+}</component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/BUILDS\Unified Particle System Physics.exe" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\jorgepaiva\Desktop\Nova pasta\Unified Particle System Physics\BUILDS" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\2022.3.39f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-projectPath &quot;C:\Users\jorgepaiva\Desktop\Nova pasta\Unified Particle System Physics&quot; -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\jorgepaiva\Desktop\Nova pasta\Unified Particle System Physics" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\2022.3.39f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath &quot;C:\Users\jorgepaiva\Desktop\Nova pasta\Unified Particle System Physics&quot; -testResults Logs/results.xml -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\jorgepaiva\Desktop\Nova pasta\Unified Particle System Physics" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="444efcb7-7572-48de-9d8b-ec487e66dd7d" name="Default Changelist" comment="" />
+      <created>1565219665158</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1565219665158</updated>
+      <workItem from="1565219669414" duration="848000" />
+      <workItem from="1565287487399" duration="2744000" />
+      <workItem from="1565432663266" duration="4374000" />
+      <workItem from="1565459488590" duration="6853000" />
+      <workItem from="1565602382986" duration="16986000" />
+      <workItem from="1565640737973" duration="16546000" />
+      <workItem from="1565732995557" duration="8867000" />
+      <workItem from="1565808868238" duration="6726000" />
+      <workItem from="1565866231363" duration="3722000" />
+      <workItem from="1565959673779" duration="13798000" />
+      <workItem from="1566050704592" duration="13156000" />
+      <workItem from="1573575646297" duration="11765000" />
+      <workItem from="1573920432705" duration="2426000" />
+      <workItem from="1573923062436" duration="567000" />
+      <workItem from="1574278071849" duration="6763000" />
+      <workItem from="1574293677806" duration="729000" />
+      <workItem from="1574364943892" duration="9577000" />
+      <workItem from="1575485593958" duration="6476000" />
+      <workItem from="1576526909514" duration="10490000" />
+      <workItem from="1577804376889" duration="5756000" />
+      <workItem from="1577994602970" duration="4565000" />
+      <workItem from="1578604660240" duration="11543000" />
+      <workItem from="1579125001604" duration="15734000" />
+      <workItem from="1579218255934" duration="9015000" />
+      <workItem from="1579648515680" duration="5604000" />
+      <workItem from="1647537174714" duration="927000" />
+      <workItem from="1647609605010" duration="1562000" />
+      <workItem from="1721917385061" duration="857000" />
+      <workItem from="1723194560674" duration="929000" />
+      <workItem from="1724070996061" duration="18000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="195630000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13434023" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39861217" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="NuGet" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Performance Profiler" order="8" />
+      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Unity" order="11" />
+      <window_info anchor="bottom" id="Unit Tests" order="12" />
+      <window_info anchor="bottom" id="Terminal" order="13" />
+      <window_info anchor="bottom" id="Event Log" order="14" side_tool="true" weight="0.32958034" />
+      <window_info anchor="bottom" id="Change Signature" order="15" side_tool="true" weight="0.32994923" />
+      <window_info anchor="bottom" id="Inspection Results" order="16" weight="0.32958034" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Errors In Solution" order="3" weight="0.3296582" />
+      <window_info anchor="right" id="Unit Tests Coverage" order="4" weight="0.32855567" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18032786" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39861217" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="NuGet" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Performance Profiler" order="8" />
+      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Unity" order="11" />
+      <window_info anchor="bottom" id="Unit Tests" order="12" />
+      <window_info anchor="bottom" id="Terminal" order="13" />
+      <window_info anchor="bottom" id="Event Log" order="14" side_tool="true" weight="0.32958034" />
+      <window_info anchor="bottom" id="Change Signature" order="15" side_tool="true" weight="0.32994923" />
+      <window_info anchor="bottom" id="Inspection Results" order="16" weight="0.32958034" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Errors In Solution" order="3" weight="0.3296582" />
+      <window_info anchor="right" id="Unit Tests Coverage" order="4" weight="0.32855567" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityProjectDiscoverer">
+    <option name="hasUnityReference" value="true" />
+    <option name="unityProject" value="true" />
+    <option name="unityProjectFolder" value="true" />
+  </component>
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D616BE05-755D-41A0-8981-0B5C14E4DD50/16/dcae3b9c/Vector3.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="60" column="6" selection-start-line="60" selection-start-column="6" selection-end-line="60" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Debug.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <marker date="1562696780552" expanded="true" signature="22:476" ph="{...}" />
+            <marker date="1562696780552" expanded="true" signature="43:83" ph="{...}" />
+            <marker date="1562696780552" expanded="true" signature="98:299" ph="{...}" />
+            <marker date="1562696780552" expanded="true" signature="324:474" ph="{...}" />
+            <marker date="1562696780552" expanded="true" signature="347:468" ph="{...}" />
+            <marker date="1562696780552" expanded="true" signature="370:453" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/616385C9-214D-4B0B-BAB5-BCA37C7791B2/19/d2b73198/Cloth.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3AB275D7-0488-4E6B-99DC-DEC59C8CC169/2e/de97c2ee/Cloth.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="38" selection-start-line="2" selection-start-column="38" selection-end-line="2" selection-end-column="38" />
+          <folding>
+            <marker date="1573577977574" expanded="true" signature="0:369" ph="/* Decompiled with JetBrains decompiler ... */" />
+            <marker date="1573577977574" expanded="true" signature="406:821" ph="{...}" />
+            <marker date="1573577977574" expanded="true" signature="432:819" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/F4AA2593-31EF-44C7-9184-4B1A1D593532/9f/599e7aa6/Cloth.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D616BE05-755D-41A0-8981-0B5C14E4DD50/32/00455e4c/Display.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="32" column="6" selection-start-line="32" selection-start-column="6" selection-end-line="32" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3A904788-B0FC-48E7-A7AF-F9B29C37540F/2c/e8848033/NativeInputSystem.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="434">
+          <caret line="57" column="6" selection-start-line="57" selection-start-column="6" selection-end-line="57" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Common/Random.cginc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-226" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Common/Math.cginc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="13" column="41" lean-forward="true" selection-start-line="13" selection-start-column="41" selection-end-line="13" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Particle.cginc">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/EF28F193-EAB6-4E49-B44B-3FB27EAB4F75/c6/b578fffd/List`1.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="41" column="11" selection-start-line="41" selection-start-column="11" selection-end-line="41" selection-end-column="11" />
+          <folding>
+            <marker date="1574280177025" expanded="true" signature="0:300" ph="/* Decompiled with JetBrains decompiler ... */" />
+            <marker date="1574280177025" expanded="false" signature="308:422" ph="..." />
+            <marker date="1574280177025" expanded="true" signature="460:69787" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="465:690" ph="///Represents a strongly typed list of objects that can be accessed by index. Provides methods to search, sort, a ... " />
+            <marker date="1574280177025" expanded="true" signature="977:69785" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="1422:1475" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="1481:1878" ph="///Initializes a new instance of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; class that is empty and h ... " />
+            <marker date="1574280177025" expanded="true" signature="1937:2225" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="2231:2714" ph="///Initializes a new instance of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; class that contains eleme ... " />
+            <marker date="1574280177025" expanded="true" signature="2786:3422" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="2982:3259" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="3046:3111" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="3124:3251" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="3270:3416" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="3428:4056" ph="///Gets or sets the total number of elements the internal data structure can hold without resizing. ... " />
+            <marker date="1574280177025" expanded="true" signature="4109:4767" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="4150:4201" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="4236:4761" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="4491:4695" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="4773:5011" ph="///Gets the number of elements contained in the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="5061:5151" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5102:5145" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5208:5293" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5249:5287" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5358:5443" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5399:5437" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5499:5584" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5540:5578" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5650:5735" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5691:5729" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5797:6023" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="5838:6017" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="6029:6517" ph="///Gets or sets the element at the specified index. ... " />
+            <marker date="1574280177025" expanded="true" signature="6575:6995" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="6616:6772" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="6807:6989" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7053:7198" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7261:7708" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7302:7355" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7390:7702" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7500:7555" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7595:7694" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="7714:8011" ph="///Adds an object to the end of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="8068:8232" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="8293:8604" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="8395:8439" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="8477:8569" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="8610:9212" ph="///Adds the elements of the specified collection to the end of the &lt;see cref=&quot;T:System.Collections.Generic.List`1 ... " />
+            <marker date="1574280177025" expanded="true" signature="9293:9353" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="9359:9647" ph="///Returns a read-only &lt;see cref=&quot;T:System.Collections.ObjectModel.ReadOnlyCollection`1&quot; /&gt; wrapper for the curre ... " />
+            <marker date="1574280177025" expanded="true" signature="9722:9791" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="9797:11807" ph="///Searches a range of elements in the sorted &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; for an element u ... " />
+            <marker date="1574280177025" expanded="true" signature="11917:12436" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="12442:13524" ph="///Searches the entire sorted &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; for an element using the default ... " />
+            <marker date="1574280177025" expanded="true" signature="13589:13675" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="13681:15118" ph="///Searches the entire sorted &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; for an element using the specifi ... " />
+            <marker date="1574280177025" expanded="true" signature="15206:15281" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="15444:15602" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="15476:15573" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="15608:16092" ph="///Determines whether an element is in the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="16154:16641" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="16193:16384" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="16258:16354" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="16513:16615" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="16708:16824" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="16830:17586" ph="///Converts the elements in the current &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; to another type, and r ... " />
+            <marker date="1574280177025" expanded="true" signature="17664:18029" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="18035:18851" ph="///Copies the entire &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; to a compatible one-dimensional array, st ... " />
+            <marker date="1574280177025" expanded="true" signature="18914:18955" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="19042:19440" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="19194:19285" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="19329:19434" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="19446:21173" ph="///Copies a range of elements from the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; to a compatible one-dim ... " />
+            <marker date="1574280177025" expanded="true" signature="21274:21490" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="21496:22595" ph="///Copies the entire &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; to a compatible one-dimensional array, st ... " />
+            <marker date="1574280177025" expanded="true" signature="22674:22767" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="22809:23073" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="23079:23778" ph="///Determines whether the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; contains elements that match the con ... " />
+            <marker date="1574280177025" expanded="true" signature="23850:23904" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="23910:24578" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the first  ... " />
+            <marker date="1574280177025" expanded="true" signature="24645:24928" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="24804:24896" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="24934:25573" ph="///Retrieves all the elements that match the conditions defined by the specified predicate. ... " />
+            <marker date="1574280177025" expanded="true" signature="25649:25973" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="25847:25945" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="25979:26668" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-b ... " />
+            <marker date="1574280177025" expanded="true" signature="26742:26805" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="26811:27875" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-b ... " />
+            <marker date="1574280177025" expanded="true" signature="27965:28050" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="28056:29471" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-b ... " />
+            <marker date="1574280177025" expanded="true" signature="29572:30227" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="30125:30204" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="30233:30899" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the last o ... " />
+            <marker date="1574280177025" expanded="true" signature="30970:31258" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="31134:31226" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="31264:31951" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-b ... " />
+            <marker date="1574280177025" expanded="true" signature="32029:32109" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="32115:33187" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-b ... " />
+            <marker date="1574280177025" expanded="true" signature="33281:33361" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="33367:34787" ph="///Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-b ... " />
+            <marker date="1574280177025" expanded="true" signature="34892:35751" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="35023:35199" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="35649:35728" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="35757:36307" ph="///Performs the specified action on each element of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="36378:36905" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="36911:37184" ph="///Returns an enumerator that iterates through the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="37259:37314" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="37394:37466" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="37540:37609" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="37615:38514" ph="///Creates a shallow copy of a range of elements in the source &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; ... " />
+            <marker date="1574280177025" expanded="true" signature="38593:39208" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="39214:39769" ph="///Searches for the specified object and returns the zero-based index of the first occurrence within the entire &lt; ... " />
+            <marker date="1574280177025" expanded="true" signature="39829:39906" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="39971:40083" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="40089:41127" ph="///Searches for the specified object and returns the zero-based index of the first occurrence within the range of ... " />
+            <marker date="1574280177025" expanded="true" signature="41198:41440" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="41446:42865" ph="///Searches for the specified object and returns the zero-based index of the first occurrence within the range of ... " />
+            <marker date="1574280177025" expanded="true" signature="42947:43350" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="43356:43966" ph="///Inserts an element into the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; at the specified index. ... " />
+            <marker date="1574280177025" expanded="true" signature="44037:44516" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="44592:44884" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="44694:44748" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="44786:44878" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="44890:45849" ph="///Inserts the elements of a collection into the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; at the specif ... " />
+            <marker date="1574280177025" expanded="true" signature="45944:47166" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="46307:47035" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="46370:47027" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="46601:46820" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="46835:46986" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="47046:47137" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="47172:47729" ph="///Searches for the specified object and returns the zero-based index of the last occurrence within the entire &lt;s ... " />
+            <marker date="1574280177025" expanded="true" signature="47793:47916" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="47922:48933" ph="///Searches for the specified object and returns the zero-based index of the last occurrence within the range of  ... " />
+            <marker date="1574280177025" expanded="true" signature="49008:49229" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="49235:50621" ph="///Searches for the specified object and returns the zero-based index of the last occurrence within the range of  ... " />
+            <marker date="1574280177025" expanded="true" signature="50707:51511" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="51517:52131" ph="///Removes the first occurrence of a specific object from the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="52191:52331" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="52396:52498" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="52504:53004" ph="///Removes all the elements that match the conditions defined by the specified predicate. ... " />
+            <marker date="1574280177025" expanded="true" signature="53078:53774" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="53402:53594" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="53780:54254" ph="///Removes the element at the specified index of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="54319:54650" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="54656:55365" ph="///Removes a range of elements from the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="55444:56194" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="56378:56425" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="56431:57113" ph="///Reverses the order of the elements in the specified range. ... " />
+            <marker date="1574280177025" expanded="true" signature="57188:57707" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="57713:58182" ph="///Sorts the elements in the entire &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; using the default comparer ... " />
+            <marker date="1574280177025" expanded="true" signature="58234:58299" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="58305:59354" ph="///Sorts the elements in the entire &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; using the specified compar ... " />
+            <marker date="1574280177025" expanded="true" signature="59427:59481" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="59487:61084" ph="///Sorts the elements in a range of elements in &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; using the spec ... " />
+            <marker date="1574280177025" expanded="true" signature="61179:61700" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="61706:62371" ph="///Sorts the elements in the entire &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; using the specified &lt;see c ... " />
+            <marker date="1574280177025" expanded="true" signature="62447:62711" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="62717:62962" ph="///Copies the elements of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; to a new array. ... " />
+            <marker date="1574280177025" expanded="true" signature="63016:63166" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="63409:63538" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="63544:64297" ph="///Determines whether every element in the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt; matches the conditi ... " />
+            <marker date="1574280177025" expanded="true" signature="64373:64637" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="64532:64612" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="64694:64766" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="64878:66869" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="64988:65083" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65107:65220" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65127:65212" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65250:65357" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65270:65349" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65388:65462" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65489:65561" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65597:65683" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65736:65826" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65860:65944" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="65991:66092" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66145:66251" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66283:66496" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66303:66389" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66401:66488" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66530:66615" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66660:66744" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66783:66863" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="66875:67009" ph="///Enumerates the elements of a &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="67129:69781" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="67281:67421" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="67608:67624" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="67632:68104" ph="///Advances the enumerator to the next element of the &lt;see cref=&quot;T:System.Collections.Generic.List`1&quot; /&gt;. ... " />
+            <marker date="1574280177025" expanded="true" signature="68164:68428" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="68463:68735" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="68743:68967" ph="///Gets the element at the current position of the enumerator. ... " />
+            <marker date="1574280177025" expanded="true" signature="69021:69125" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="69066:69117" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="69190:69480" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="69235:69472" ph="{...}" />
+            <marker date="1574280177025" expanded="true" signature="69543:69775" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUClothConstraint.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="8" column="10" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
+          <folding>
+            <marker date="1574033731808" expanded="false" signature="6:104" ph="..." />
+            <marker date="1574033731808" expanded="true" signature="134:2427" ph="{...}" />
+            <marker date="1574033731808" expanded="true" signature="165:2425" ph="{...}" />
+            <marker date="1574033731808" expanded="true" signature="380:774" ph="{...}" />
+            <marker date="1574033731808" expanded="true" signature="960:1069" ph="{...}" />
+            <marker date="1574033731808" expanded="true" signature="1160:2419" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/Utils.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1574033731815" expanded="true" signature="46:953" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="89:163" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="205:274" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="323:424" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="473:564" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="609:653" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="698:742" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="780:823" ph="{...}" />
+            <marker date="1574033731815" expanded="true" signature="870:951" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/HUDFPS.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-591">
+          <caret line="6" column="17" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+          <folding>
+            <marker date="1574033731812" expanded="false" signature="6:44" ph="..." />
+            <marker date="1574033731812" expanded="true" signature="74:3013" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="160:3011" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="170:689" ph="/* Attach this to any object to make a frames/second indicator. ... */" />
+            <marker date="1574033731812" expanded="true" signature="1589:1635" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="1659:1746" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="1774:2300" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="1868:2290" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="2323:2754" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="2436:2618" ph="{...}" />
+            <marker date="1574033731812" expanded="true" signature="2794:3005" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CameraControl.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1501">
+          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+          <folding>
+            <marker date="1574033731811" expanded="false" signature="6:44" ph="..." />
+            <marker date="1574033731811" expanded="true" signature="88:4374" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="779:992" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="1054:4100" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="1097:1273" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="1358:1615" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="2356:2533" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="2543:2653" ph="/* ? ... */" />
+            <marker date="1574033731811" expanded="true" signature="3219:3419" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="3515:4093" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="3538:3793" ph="/* if middle mouse button is pressed 1st time set click to true and camera in front of player and save cameras po ... */" />
+            <marker date="1574033731811" expanded="true" signature="3825:3971" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="3988:4083" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="4172:4372" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="4204:4250" ph="{...}" />
+            <marker date="1574033731811" expanded="true" signature="4275:4321" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUBody.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding>
+            <marker date="1574033731805" expanded="true" signature="28:425" ph="{...}" />
+            <marker date="1574033731805" expanded="true" signature="57:423" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUBodyController.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="8" column="10" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
+          <folding>
+            <marker date="1574033731806" expanded="false" signature="6:115" ph="..." />
+            <marker date="1574033731806" expanded="true" signature="145:1216" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="175:1214" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="237:405" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="255:395" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="567:878" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="677:747" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="1063:1208" ph="{...}" />
+            <marker date="1574033731806" expanded="true" signature="1114:1198" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUCloth.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="4" column="10" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
+          <folding>
+            <marker date="1574033731807" expanded="true" signature="63:4122" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="94:4120" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="211:359" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="902:2217" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="947:2207" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="1010:2193" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="2277:3596" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="2323:3586" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="2374:3572" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="3674:3861" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="3952:4114" ph="{...}" />
+            <marker date="1574033731807" expanded="true" signature="4015:4104" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SmoothMouseLook.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="45" column="9" lean-forward="true" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
+          <folding>
+            <marker date="1575489660827" expanded="true" signature="6:52" ph="..." />
+            <marker date="1575489660827" expanded="true" signature="155:3885" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="795:3428" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="897:977" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1008:1088" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1119:1195" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1226:1307" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1349:2331" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1617:1650" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1691:1724" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1771:1810" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="1855:1894" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="2371:2895" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="2532:2565" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="2610:2649" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="2902:3425" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3063:3096" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3141:3180" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3445:3597" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3667:3883" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3737:3840" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3761:3786" ph="{...}" />
+            <marker date="1575489660827" expanded="true" signature="3808:3833" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/STDUtils.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
+          <folding>
+            <marker date="1574033731814" expanded="false" signature="7:67" ph="..." />
+            <marker date="1574033731814" expanded="true" signature="98:1115" ph="{...}" />
+            <marker date="1574033731814" expanded="true" signature="150:212" ph="{...}" />
+            <marker date="1574033731814" expanded="true" signature="297:463" ph="{...}" />
+            <marker date="1574033731814" expanded="true" signature="525:622" ph="{...}" />
+            <marker date="1574033731814" expanded="true" signature="680:791" ph="{...}" />
+            <marker date="1574033731814" expanded="true" signature="857:1113" ph="{...}" />
+            <marker date="1574033731814" expanded="true" signature="976:1107" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/BitonicMergeSort.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+          <folding>
+            <marker date="1574033731760" expanded="false" signature="6:44" ph="..." />
+            <marker date="1574033731760" expanded="true" signature="66:2358" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="120:2356" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="690:875" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="916:1138" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="1200:1695" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="1387:1691" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="1480:1686" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="1760:2271" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="1950:2267" ph="{...}" />
+            <marker date="1574033731760" expanded="true" signature="2043:2262" ph="{...}" />
+            <marker date="1574033731760" expanded="false" signature="2275:2353" ph="IDisposable implementation" />
+            <marker date="1574033731760" expanded="true" signature="2335:2340" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/DisposableBuffer.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+          <folding>
+            <marker date="1574033731761" expanded="false" signature="6:82" ph="..." />
+            <marker date="1574033731761" expanded="true" signature="104:654" ph="{...}" />
+            <marker date="1574033731761" expanded="true" signature="161:652" ph="{...}" />
+            <marker date="1574033731761" expanded="true" signature="296:409" ph="{...}" />
+            <marker date="1574033731761" expanded="false" signature="526:649" ph="IDisposable implementation" />
+            <marker date="1574033731761" expanded="true" signature="586:636" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/ShaderUtil.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+          <folding>
+            <marker date="1574033731762" expanded="false" signature="6:44" ph="..." />
+            <marker date="1574033731762" expanded="true" signature="67:691" ph="{...}" />
+            <marker date="1574033731762" expanded="true" signature="101:689" ph="{...}" />
+            <marker date="1574033731762" expanded="true" signature="330:576" ph="{...}" />
+            <marker date="1574033731762" expanded="true" signature="366:426" ph="{...}" />
+            <marker date="1574033731762" expanded="true" signature="625:686" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Packages/MergeSort/BitonicMergeSort.compute">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Resources/BitonicSort.compute">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-171" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/Cloth.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1574280205200" expanded="true" signature="20:499" ph="{...}" />
+            <marker date="1574280205200" expanded="true" signature="47:497" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Common.cginc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/SystemDecl.cginc">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/System.compute">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="297" column="53" lean-forward="true" selection-start-line="297" selection-start-column="53" selection-end-line="297" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D195DA47-F292-4AA6-AB1F-FC82F421F850/63/a545a51d/List`1.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="921" column="15" selection-start-line="921" selection-start-column="15" selection-end-line="921" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Resources/GridHash.compute">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="25" column="33" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ISolver.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="1" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
+          <folding>
+            <marker date="1574033731831" expanded="true" signature="20:101" ph="{...}" />
+            <marker date="1574033731831" expanded="true" signature="51:99" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Sorting/BitonicSort.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2641">
+          <caret line="140" column="1" lean-forward="true" selection-start-line="140" selection-start-column="1" selection-end-line="140" selection-end-column="1" />
+          <folding>
+            <marker date="1575487609001" expanded="false" signature="6:32" ph="..." />
+            <marker date="1575487609001" expanded="true" signature="70:6177" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="111:6175" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="1140:1698" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="1729:1843" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="1890:5543" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="2721:2808" ph="/* Sort the data ... */" />
+            <marker date="1575487609001" expanded="true" signature="2888:3174" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="3188:3328" ph="/* Then sort the rows and columns for the levels &gt; than the block size ... */" />
+            <marker date="1575487609001" expanded="true" signature="3424:5248" ph="{...}" />
+            <marker date="1575487609001" expanded="true" signature="5591:6168" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Grid/HashGrid.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1278">
+          <caret line="34" column="29" selection-start-line="34" selection-start-column="29" selection-end-line="34" selection-end-column="29" />
+          <folding>
+            <marker date="1575488207833" expanded="false" signature="6:66" ph="..." />
+            <marker date="1575488207833" expanded="true" signature="94:6390" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="140:6388" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="735:895" ph="/// Compute buffer: Which cell the particle is in (x) and ... " />
+            <marker date="1575488207833" expanded="true" signature="965:1109" ph="/// Compute Buffer: cell Id mapping to ... " />
+            <marker date="1575488207833" expanded="true" signature="1493:2860" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="2895:3173" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="2921:3163" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="3204:3513" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="3283:3380" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="3412:3503" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="3567:4456" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="4534:5540" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="4652:4798" ph="/* if (numParticles + numBoundary != TotalParticles) ... */" />
+            <marker date="1575488207833" expanded="true" signature="5573:6382" ph="{...}" />
+            <marker date="1575488207833" expanded="true" signature="5596:5697" ph="/* First sort by the hash values in x. ... */" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/SmoothingKernel.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="37">
+          <caret line="14" column="11" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
+          <folding>
+            <marker date="1574033731844" expanded="false" signature="6:32" ph="..." />
+            <marker date="1574033731844" expanded="true" signature="62:1485" ph="{...}" />
+            <marker date="1574033731844" expanded="true" signature="488:814" ph="{...}" />
+            <marker date="1574033731844" expanded="true" signature="839:877" ph="{...}" />
+            <marker date="1574033731844" expanded="true" signature="902:940" ph="{...}" />
+            <marker date="1574033731844" expanded="true" signature="975:1078" ph="{...}" />
+            <marker date="1574033731844" expanded="true" signature="1119:1298" ph="{...}" />
+            <marker date="1574033731844" expanded="true" signature="1335:1482" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/Solver.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="7" column="26" selection-start-line="7" selection-start-column="26" selection-end-line="7" selection-end-column="26" />
+          <folding>
+            <marker date="1574033731835" expanded="false" signature="6:89" ph="..." />
+            <marker date="1574033731835" expanded="true" signature="111:1312" ph="{...}" />
+            <marker date="1574033731835" expanded="true" signature="169:1310" ph="{...}" />
+            <marker date="1574033731835" expanded="true" signature="842:1098" ph="{...}" />
+            <marker date="1574033731835" expanded="true" signature="1146:1251" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ParticleSource.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="5" column="40" selection-start-line="5" selection-start-column="40" selection-end-line="5" selection-end-column="40" />
+          <folding>
+            <marker date="1574033731834" expanded="false" signature="6:52" ph="..." />
+            <marker date="1574033731834" expanded="true" signature="89:635" ph="{...}" />
+            <marker date="1574033731834" expanded="true" signature="132:633" ph="{...}" />
+            <marker date="1574033731834" expanded="true" signature="573:626" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ParticleBounds.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="14" column="15" selection-start-line="14" selection-start-column="15" selection-end-line="14" selection-end-column="15" />
+          <folding>
+            <marker date="1574033731832" expanded="false" signature="6:52" ph="..." />
+            <marker date="1574033731832" expanded="true" signature="89:2397" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="145:2395" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="239:418" ph="/* for fluid body, need to create particles for space in the middle ... */" />
+            <marker date="1574033731832" expanded="true" signature="571:704" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="815:967" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="1007:2388" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="1393:2377" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="1454:2363" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="1523:2345" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="1592:1846" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="1968:2236" ph="{...}" />
+            <marker date="1574033731832" expanded="true" signature="2063:2210" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Resources/FluidBoundary.compute">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1139">
+          <caret line="79" column="1" selection-start-line="79" selection-start-column="1" selection-end-line="79" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/InstaceSurfaceShader.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1106">
+          <caret line="66" column="8" lean-forward="true" selection-start-line="66" selection-start-column="8" selection-end-line="66" selection-end-column="8" />
+          <folding>
+            <marker date="1579220583276" expanded="true" signature="42:2621" ph="{...}" />
+            <marker date="1579220583276" expanded="true" signature="55:226" ph="{...}" />
+            <marker date="1579220583276" expanded="true" signature="238:2598" ph="{...}" />
+            <marker date="1579220583276" expanded="true" signature="296:2590" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Body.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="18" column="23" lean-forward="true" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
+          <folding>
+            <marker date="1579139046707" expanded="false" signature="6:69" ph="..." />
+            <marker date="1579139046707" expanded="true" signature="84:926" ph="{...}" />
+            <marker date="1579139046707" expanded="true" signature="108:924" ph="{...}" />
+            <marker date="1579139046707" expanded="true" signature="123:201" ph="/* Body id from 0 to 255 ... */" />
+            <marker date="1579139046707" expanded="true" signature="657:859" ph="{...}" />
+            <marker date="1579139046707" expanded="true" signature="906:918" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidBoundary.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="997">
+          <caret line="113" column="63" selection-start-line="113" selection-start-column="63" selection-end-line="113" selection-end-column="63" />
+          <folding>
+            <marker date="1579139532563" expanded="false" signature="6:67" ph="..." />
+            <marker date="1579139532563" expanded="true" signature="104:5215" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="151:5213" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="830:918" ph="/* argument buffer for GPU instance drawing ... */" />
+            <marker date="1579139532563" expanded="true" signature="1153:1433" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="1465:1609" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="1685:3220" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="1952:2778" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="3368:5206" ph="{...}" />
+            <marker date="1579139532563" expanded="true" signature="4805:5097" ph="/* Fills the boundaries psi array so the fluid can ... */" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CPU/CPUParticleSystem.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-78">
+          <caret line="707" column="39" lean-forward="true" selection-start-line="707" selection-start-column="39" selection-end-line="707" selection-end-column="39" />
+          <folding>
+            <marker date="1574033731810" expanded="false" signature="6:175" ph="..." />
+            <marker date="1574033731810" expanded="true" signature="196:2894" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="302:361" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="412:474" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="549:595" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="653:705" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="726:825" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="882:969" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="1026:1212" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="1269:1455" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="1512:1698" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="1755:1938" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="1994:2172" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="2228:2406" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="2462:2640" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="2696:2751" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="2819:2892" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="2916:5262" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3028:3083" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3133:3188" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3253:3296" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3317:3393" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3440:3507" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3564:3715" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3773:3924" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="3980:4125" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="4181:4326" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="4382:4527" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="4584:4735" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="4792:4943" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="4991:5044" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5099:5149" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5199:5260" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5283:7282" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5390:5462" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5509:5581" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5641:5683" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5703:5770" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5813:5880" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="5934:6083" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="6137:6286" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="6339:6482" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="6535:6678" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="6731:6874" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="6928:7077" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7131:7280" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7302:9239" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7404:7472" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7516:7584" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7639:7680" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7699:7766" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7805:7872" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="7923:8070" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="8121:8268" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="8318:8459" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="8509:8650" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="8700:8841" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="8892:9039" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="9090:9237" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="9288:28377" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="9885:9963" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="9904:9957" ph="{...}" />
+            <marker date="1574033731810" expanded="false" signature="10545:10796" ph="WORLD AND GRID" />
+            <marker date="1574033731810" expanded="true" signature="10891:10950" ph="/* Cloth Properties ... */" />
+            <marker date="1574033731810" expanded="true" signature="11230:14300" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="12038:12510" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="14320:15117" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="14478:14502" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="15148:15801" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="15459:15795" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="15495:15675" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="15858:17766" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="16547:17760" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="16597:17750" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="16651:17736" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="17189:17535" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="17535:17659" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="17797:17974" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="18051:19814" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="18112:19808" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="18271:18534" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="18739:18857" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="18909:19028" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="19079:19197" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="19249:19368" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="19419:19537" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="19589:19708" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="19847:19979" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="20025:20427" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="20086:20421" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="20492:21021" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="20554:21015" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="20736:20829" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="20829:20933" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="21119:21515" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="21181:21509" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="21215:21499" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="21642:22645" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="21906:22387" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="21981:22377" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="22064:22363" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="22804:23684" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="23196:23656" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="23747:24473" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="24544:24847" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="24903:25488" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="25130:25361" ph="/* Isto foi fixed ... */" />
+            <marker date="1574033731810" expanded="true" signature="25576:25923" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="26048:26197" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="26313:28375" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="26629:26666" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="26740:26948" ph="/* Now we dont iterate all the particles in the Buffer ... */" />
+            <marker date="1574033731810" expanded="true" signature="27133:27712" ph="/* Probelma encontrado neste loop ... */" />
+            <marker date="1574033731810" expanded="true" signature="27764:28347" ph="{...}" />
+            <marker date="1574033731810" expanded="true" signature="27966:28337" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidSolverN.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="29" column="15" selection-start-line="29" selection-start-column="15" selection-end-line="29" selection-end-column="15" />
+          <folding>
+            <marker date="1579223208540" expanded="true" signature="6:156" ph="..." />
+            <marker date="1579223208540" expanded="true" signature="178:10220" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="219:10218" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="1291:2053" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="2105:4357" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="3680:3949" ph="/* Predicted and velocities use a double buffer as solver step ... */" />
+            <marker date="1579223208540" expanded="true" signature="4013:4347" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="4398:5149" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="5191:8099" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="6741:8089" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="8140:8744" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="8783:9730" ph="{...}" />
+            <marker date="1579223208540" expanded="true" signature="9770:10212" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ClothBody.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="16" column="37" lean-forward="true" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="37" />
+          <folding>
+            <marker date="1579652635194" expanded="false" signature="6:177" ph="..." />
+            <marker date="1579652635194" expanded="true" signature="214:3879" ph="{...}" />
+            <marker date="1579652635194" expanded="true" signature="250:3877" ph="{...}" />
+            <marker date="1579652635194" expanded="true" signature="686:757" ph="{...}" />
+            <marker date="1579652635194" expanded="true" signature="822:3871" ph="{...}" />
+            <marker date="1579652635194" expanded="true" signature="1605:2582" ph="{...}" />
+            <marker date="1579652635194" expanded="true" signature="1670:2568" ph="{...}" />
+            <marker date="1579652635194" expanded="true" signature="3088:3727" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/ClothSolver.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1902">
+          <caret line="170" column="46" lean-forward="true" selection-start-line="170" selection-start-column="46" selection-end-line="170" selection-end-column="46" />
+          <folding>
+            <marker date="1579651452106" expanded="true" signature="6:109" ph="..." />
+            <marker date="1579651452106" expanded="true" signature="131:8731" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="171:8729" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="772:1157" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="1197:1209" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="1261:3192" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="1344:3182" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="2743:3168" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="2827:2987" ph="/* Hash.Process(controller.PredictedBuffer[READ], boundary.PositionsBuffer); ... */" />
+            <marker date="1579651452106" expanded="true" signature="3258:3794" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="3851:4747" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="4795:5848" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="5186:5838" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="5897:6611" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="6665:8117" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="7819:7978" ph="{...}" />
+            <marker date="1579651452106" expanded="true" signature="8173:8723" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Solvers/ClothSolver.compute">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="45" column="3" selection-start-line="45" selection-start-column="3" selection-end-line="45" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Shader/Resources/FluidSolver.compute">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1436">
+          <caret line="379" column="32" selection-start-line="379" selection-start-column="32" selection-end-line="379" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/GPUParticleSystem.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="94">
+          <caret line="329" column="15" selection-start-line="329" selection-start-column="15" selection-end-line="329" selection-end-column="15" />
+          <folding>
+            <marker date="1579653398571" expanded="true" signature="6:234" ph="..." />
+            <marker date="1579653398571" expanded="true" signature="282:18081" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="1007:1138" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="1054:1132" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="1349:1407" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="2541:2607" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="2634:3030" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="2764:2950" ph="/* var transform1 = sphere.transform; ... */" />
+            <marker date="1579653398571" expanded="true" signature="3061:3298" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="3320:3997" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="3336:3489" ph="/* Reset Grid to be Updated ... */" />
+            <marker date="1579653398571" expanded="true" signature="3560:3991" ph="/* mat.SetBuffer(&quot;positions&quot;, oldPositionBuffer); ... */" />
+            <marker date="1579653398571" expanded="true" signature="4033:8274" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="4081:4299" ph="/* Set the debug materials textures so they are rendered in the screen ... */" />
+            <marker date="1579653398571" expanded="true" signature="4309:5009" ph="/* computeShader.SetBuffer(kernel, &quot;oldPositionBuffer&quot;, oldPositionBuffer); ... */" />
+            <marker date="1579653398571" expanded="true" signature="5027:6134" ph="/* Update cloth ... */" />
+            <marker date="1579653398571" expanded="true" signature="6145:6760" ph="/* if (useTexture) { ... */" />
+            <marker date="1579653398571" expanded="true" signature="6770:8268" ph="/* if (useTexture) { ... */" />
+            <marker date="1579653398571" expanded="true" signature="8307:8521" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="8322:8515" ph="/* computeShader.SetFloat(&quot;deltaTime&quot;, customTimeStep); ... */" />
+            <marker date="1579653398571" expanded="true" signature="8849:9002" ph="/* the boundaries of the container ... */" />
+            <marker date="1579653398571" expanded="true" signature="9499:9724" ph="/* the two public vector3 for the ratio of fluid body(deprecated solution) ... */" />
+            <marker date="1579653398571" expanded="true" signature="10427:11327" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="10513:11321" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="11090:11247" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="11361:13233" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="12295:12375" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="13078:13227" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="13265:13545" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="13387:13483" ph="/* draw particles using GPU instancing ... */" />
+            <marker date="1579653398571" expanded="true" signature="13729:15962" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="13858:14020" ph="/* create the fluid boundary according to the position and size of the container ... */" />
+            <marker date="1579653398571" expanded="true" signature="14409:14693" ph="/* Make the boundary 1 particle thick. ... */" />
+            <marker date="1579653398571" expanded="true" signature="15099:15204" ph="/* outerBounds is the outmost bound of all particles ... */" />
+            <marker date="1579653398571" expanded="true" signature="15295:15400" ph="/* The source will create a array of particles ... */" />
+            <marker date="1579653398571" expanded="true" signature="15612:15714" ph="/* given the particle positions contained in &quot;source&quot; object ... */" />
+            <marker date="1579653398571" expanded="true" signature="15847:15956" ph="/* pass bounds objects ... */" />
+            <marker date="1579653398571" expanded="true" signature="15968:16088" ph="/* given a cube region, create a fluid body ... */" />
+            <marker date="1579653398571" expanded="true" signature="16273:18079" ph="{...}" />
+            <marker date="1579653398571" expanded="true" signature="16374:16459" ph="/* Vector3 min = new Vector3(-8, 0, -1); ... */" />
+            <marker date="1579653398571" expanded="true" signature="16541:16872" ph="/* Vector3 min = new Vector3(fluidBodyPos[0] - 0.5f * fluidBodyScale[0], fluidBodyPos[1] - 0.5f * fluidBodyScale[ ... */" />
+            <marker date="1579653398571" expanded="true" signature="16960:17463" ph="/* create the fluid body according to the size and position of the container ... */" />
+            <marker date="1579653398571" expanded="true" signature="17685:17880" ph="/* The source will create a array of particles evenly spaced inside the bounds. ... */" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/BodyController.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-133">
+          <caret line="22" column="36" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
+          <folding>
+            <marker date="1579220553926" expanded="false" signature="6:133" ph="..." />
+            <marker date="1579220553926" expanded="true" signature="148:5496" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="196:5494" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="1964:2289" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="2329:2433" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="2443:2546" ph="/// Draws the mesh spheres when draw particles is enabled. ... " />
+            <marker date="1579220553926" expanded="true" signature="2642:3303" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="3366:3671" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="3720:5008" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="4173:4341" ph="/* Predicted and velocities use a double buffer as solver step ... */" />
+            <marker date="1579220553926" expanded="true" signature="5065:5121" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="5160:5488" ph="{...}" />
+            <marker date="1579220553926" expanded="true" signature="5211:5322" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GPU/Fluids/FluidBody.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="21" column="46" selection-start-line="21" selection-start-column="45" selection-end-line="21" selection-end-column="46" />
+          <folding>
+            <marker date="1579653403683" expanded="true" signature="6:58" ph="..." />
+            <marker date="1579653403683" expanded="true" signature="95:2331" ph="{...}" />
+            <marker date="1579653403683" expanded="true" signature="131:2288" ph="{...}" />
+            <marker date="1579653403683" expanded="true" signature="534:625" ph="{...}" />
+            <marker date="1579653403683" expanded="true" signature="673:2214" ph="{...}" />
+            <marker date="1579653403683" expanded="true" signature="983:1695" ph="{...}" />
+            <marker date="1579653403683" expanded="true" signature="1162:1276" ph="/* modified: add initial velocity to the particles ... */" />
+            <marker date="1579653403683" expanded="true" signature="2262:2282" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

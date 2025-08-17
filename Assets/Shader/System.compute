@@ -1,0 +1,380 @@
+﻿#pragma kernel CSMain
+#pragma kernel CSUpdateGrid
+#pragma kernel CSSolveCollisions
+
+#include "./Common.cginc"
+#include "./Common/Random.cginc"
+
+int texWidth;
+int texHeight;
+
+float particleRadius;
+int NumParticles;
+
+float3 boxSize;
+
+float gravity;
+
+float collideSpring;
+float collideDamping;
+float collideShear;
+float collideAttraction;
+float globalDamping;
+float boundaryDamping;
+
+float deltaTime;
+
+float4 rigidBodyPosition;
+float4 rigidBodyVelocity;
+float radius;
+
+#include "./SystemDecl.cginc"
+
+float3 collideSpheres(float4 particleAPos,
+                      float4 particleBPos,
+                      float3 particleAVel,
+                      float3 particleBVel,
+                      float attraction,
+                      float radiusA,
+                      float radiusB)
+{
+    float3 posA = particleAPos.xyz;
+    float3 velA = particleAVel; 
+
+    float3 posB = particleBPos.xyz;
+    float3 velB = particleBVel; 
+
+    float3 relPos;
+    relPos.x = posB.x - posA.x;
+    relPos.y = posB.y - posA.y;
+    relPos.z = posB.z - posA.z;
+
+    float dist = length(relPos);
+
+    float collideDist = radiusA + radiusB;
+
+    float3 force = float3(0.0f, 0.0f, 0.0f);
+    
+    if (dist < collideDist)
+    {
+        float pen = collideDist - dist;
+        float res = pen * 100.0f;
+
+        float3 norm = normalize(relPos);
+        float3 relVel = velB - velA;
+        float3 tanVel = relVel - (dot(relVel, norm) * norm);
+	    
+        force = -collideSpring * res * norm;
+        force += collideDamping*relVel;
+        force += collideShear*tanVel;
+        force += attraction*relPos;
+    }
+    return force;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////INTEGRATION///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+void integrateForces(inout float4 pos, inout float4 velocity)
+{
+    float3 prevVel = velocity.xyz;
+    float3 newPos = pos.xyz;
+    float3 prevPos = pos.xyz - prevVel;
+
+    float mass = velocity.w;
+    if(mass == 0.0f)
+        return;
+    float3 accel = float3(0.0f, 0.0f, 0.0f);
+    float3 f = float3(0.0f, 0.0f, 0.0f);
+
+    // Calculate acceleration ( F = ma )
+    float3 gravityF = float3(0.0f, gravity, 0.0f);
+    if(mass != 0) {
+        accel = gravityF / mass;
+        f = mass * accel;
+    }
+
+	// Integrate to get velocity
+    velocity.xyz += (f * deltaTime) * globalDamping;
+
+	// Integrate to get position
+    float3 vel3 = float3(velocity.x, velocity.y, velocity.z);
+    newPos += vel3 * deltaTime;
+    pos = float4(newPos, pos.w);
+}
+
+
+[numthreads(THREAD_X,THREAD_Y,THREAD_Z)]
+void CSMain 
+(uint3 id : SV_DispatchThreadID)
+{
+#ifdef USE_TEX
+    uint particleIndex = texWidth * id.y + id.x;
+    if (id.x > texWidth || id.y > texHeight || particleIndex > NumParticles) 
+        return;
+    
+    float4 composedVelocity = oldVelocityTexture[id.xy];
+    float4 pos = oldPositionTexture[id.xy];
+#else  
+    uint index = id.x;
+    uint w;
+    oldPositionBuffer.GetDimensions(w);
+    if (index > w) 
+        return;
+
+    float4 composedVelocity = oldVelocityBuffer[index];
+    float4 pos = oldPositionBuffer[index];
+#endif
+    
+    //integrateForces(pos, composedVelocity);
+
+    float _particleRadius = pos.w;
+    float bounceDamping = -boundaryDamping;
+    if (pos.x > boxSize.x / 2 - _particleRadius) {
+        pos.x = boxSize.x / 2 - _particleRadius;
+        composedVelocity.x *= bounceDamping;
+    }
+    if (pos.x < -boxSize.x / 2 + _particleRadius) {
+        pos.x = -boxSize.x / 2 + _particleRadius;
+        composedVelocity.x *= bounceDamping;
+    }
+    if (pos.y > boxSize.y / 2 - _particleRadius) {
+        pos.y = boxSize.y / 2 - _particleRadius;
+        composedVelocity.y *= bounceDamping;
+    }
+    if (pos.y < -boxSize.y / 2 + _particleRadius) {
+        pos.y = -boxSize.y / 2 + _particleRadius;
+        composedVelocity.y *= bounceDamping;
+    }
+    if (pos.z > boxSize.z / 2 - _particleRadius) {
+        pos.z = boxSize.z / 2 - _particleRadius;
+        composedVelocity.z *= bounceDamping;
+    }
+    if (pos.z < -boxSize.z / 2 + _particleRadius) {
+        pos.z = -boxSize.z / 2 + _particleRadius;
+        composedVelocity.z *= bounceDamping;
+    }
+    
+#ifdef USE_TEX
+    newPositionTexture[id.xy] = pos;
+    newVelocityTexture[id.xy] = composedVelocity;
+#else
+    newVelocityBuffer[index] += composedVelocity;
+    newPositionBuffer[index] = pos;
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////
+//UNIFORM//GRID///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+// calculate position in uniform grid
+int3 calcGridPos(float4 pos, float3 worldOrigin, float3 cellSize)
+{
+    int3 gridPos = float3(0, 0, 0);
+    gridPos.x = floor((pos.x - worldOrigin.x) / cellSize.x);
+    gridPos.y = floor((pos.y - worldOrigin.y) / cellSize.y);
+    gridPos.z = floor((pos.z - worldOrigin.z) / cellSize.z);
+    return gridPos;
+}
+
+// calculate address in grid from position (clamping to edges)
+uint calcGridAddress(int3 gridPos, float3 gridSize)
+{
+    gridPos.x = max(0, min(gridPos.x, gridSize.x - 1));
+    gridPos.y = max(0, min(gridPos.y, gridSize.y - 1));
+    gridPos.z = max(0, min(gridPos.z, gridSize.z - 1));
+    //return mul(mul(gridPos.z, gridSize.y), gridSize.x) + mul(gridPos.y, gridSize.x) + gridPos.x;
+    return mul(mul(gridPos.x, gridSize.y), gridSize.x) + mul(gridPos.y, gridSize.x) + gridPos.z;
+    //return ((gridPos.z, gridSize.y) * gridSize.x) + (gridPos.y * gridSize.x) + gridPos.x;
+}
+
+// add particle to cell using atomics
+void addParticleToCell(int3 gridPos, uint index, uint maxParticlesPerCell, float3 gridSize)
+{
+    uint gridAddress = calcGridAddress(gridPos, gridSize);
+	//using Interlocked operation 
+	//Performs a guaranteed atomic add of value to the dest resource variable
+    uint counter = 0;
+    InterlockedAdd(gridCounters[gridAddress], 1, counter);
+    counter = min(counter, maxParticlesPerCell - 1);
+    gridCells[gridAddress * maxParticlesPerCell + counter] = index;
+}
+
+//update uniform grid
+void updateGridD(float4 pos, uint index, float3 gridSize, float3 cellSize, float3 worldOrigin, uint maxParticlesPerCell)
+{
+    int3 gridPos = calcGridPos(pos, worldOrigin, cellSize);
+    addParticleToCell(gridPos, index, maxParticlesPerCell, gridSize);
+}
+
+// calculate grid hash value for each particle
+//NOT IMPLEMENTED YET
+void calcHash(float4 pos, uint index, float3 gridSize, float3 cellSize, float3 worldOrigin)
+{
+	// get address in grid
+    int3 gridPos = calcGridPos(pos, worldOrigin, cellSize);
+    uint gridAddress = calcGridAddress(gridPos, gridSize);
+
+	// store grid hash and particle index
+    particleHash[index] = uint2(gridAddress, index);
+}
+
+// find start of each cell in sorted particle list by comparing with previous hash value
+// one thread per particle
+// TODO Using with sorted hash collisions
+//NOT IMPLEMENTED YET
+void findCellStart(uint index, uint numParticles, uint numCells)
+{
+    uint cell = particleHash[index].x;
+    if (index > 0)
+    {
+        if (cell != particleHash[index - 1].x)
+        {
+            cellStart[cell] = index;
+        }
+    }
+    else
+    {
+        cellStart[cell] = index;
+    }
+}
+
+[numthreads(THREAD_X, THREAD_Y, THREAD_Z)]
+void CSUpdateGrid
+(uint3 id : SV_DispatchThreadID)
+{
+    uint2 index = id.xy;
+
+#ifdef USE_TEX
+    uint particleIndex = texWidth * id.y + id.x;
+    if (index.x > texWidth || index.y > texHeight || particleIndex > NumParticles) 
+        return;
+    
+    float4 pos = oldPositionTexture[id.xy];
+    //float4 pos = UINTtoRGBA(posUint);
+#else  
+    uint w;
+    oldPositionBuffer.GetDimensions(w);
+    if (index.x > w) 
+        return;
+    float4 pos = oldPositionBuffer[index.x];
+
+#endif
+        
+    float3 cellSr = float3(_cellSize, _cellSize, _cellSize);
+
+#ifdef USE_TEX
+    int3 gridPos = calcGridPos(pos, _worldOrigin, cellSr);
+#else  
+    int3 gridPos = calcGridPos(oldPositionBuffer[index.x], _worldOrigin, cellSr);
+#endif
+
+    updateGridD(pos, texWidth * id.y + id.x, _gridSize, _cellSize, _worldOrigin, _maxParticlesPerCell);
+}
+
+//////////////////////////////////////////////////////////////////////
+//COLLISIONS//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+float3 collideCell(uint index, float4 pos, float4 vel, int3 gridPos, float3 gridSize, uint maxParticlesPerCell)
+{
+    float3 force = float3(0.0f, 0.0f, 0.0f);
+
+	////Check out of bounds
+    if ((gridPos.x < 0) || (gridPos.x > int(gridSize.x) - 1) ||
+        (gridPos.y < 0) || (gridPos.y > int(gridSize.y) - 1) ||
+        (gridPos.z < 0) || (gridPos.z > int(gridSize.z) - 1))
+    {
+        return force;
+    }
+
+    uint gridAddress = calcGridAddress(gridPos, gridSize);
+	
+	//Now we dont iterate all the particles in the Buffer
+	//as that would create a O(N^2) problem
+	//=================================================
+	// iterate over particles in this cell
+    uint particlesInCell = gridCounters[gridAddress];
+	particlesInCell = min(particlesInCell, maxParticlesPerCell - 1);
+	
+    float radiusA = pos.w;
+
+    for (uint i = 0; i < particlesInCell; i++) {
+        uint index2 = gridCells[gridAddress * maxParticlesPerCell + i];
+    #ifdef USE_TEX    
+        uint2 id2 = uint2(0, 0);
+        id2 = uint2(index2 % texWidth, index2 / texWidth);
+    #endif
+
+        //if (PhaseBuffer[index].x != 0.0f) {
+        //    continue;
+        //}
+        if (index2 != index.x) {
+        #ifdef USE_TEX
+            float4 vel2 = oldVelocityTexture[id2];
+            float4 pos2 = oldPositionTexture[id2];
+        #else
+            float4 pos2 = oldPositionBuffer[index2];
+            float4 vel2 = oldVelocityBuffer[index2];
+        #endif
+            float radiusB = pos2.w;
+		    //Collide them
+            force += collideSpheres(pos, pos2, vel.xyz, vel2.xyz, collideAttraction, radiusA, radiusB);
+        }
+    }
+    return force;
+}
+
+[numthreads(THREAD_X, THREAD_Y, THREAD_Z)]
+void CSSolveCollisions
+(uint3 id : SV_DispatchThreadID, 
+ uint3 gId : SV_GroupID, 
+ uint3 gtId : SV_GroupThreadID)
+{
+    uint2 index = id.xy;
+#ifdef USE_TEX
+    uint particleIndex = texWidth * id.y + id.x;
+    if (index.x > texWidth || index.y > texHeight || particleIndex > NumParticles) 
+        return;
+    
+    float4 vel = oldVelocityTexture[id.xy];
+    float4 pos = oldPositionTexture[id.xy];
+#else  
+    uint w;
+    oldVelocityBuffer.GetDimensions(w);
+    if (index.x > w) 
+        return;
+    uint particleIndex = index.x;
+    float4 pos = oldPositionBuffer[index.x];
+    float4 vel = oldVelocityBuffer[index.x];
+#endif
+    
+    float3 cellS = float3(_cellSize, _cellSize, _cellSize);
+    int3 gridPos = calcGridPos(pos, _worldOrigin, cellS);
+    float3 force = float3(0.0f, 0.0f, 0.0f);
+    
+	// examine only neighbouring cells
+    //3 * 3 * 3 = 27 total cells 
+    for (int z = -1; z <= 1; z++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                int3 nGridPos = gridPos + int3(x, y, z);
+                force += collideCell(particleIndex, pos, vel, nGridPos, _gridSize, _maxParticlesPerCell);
+            }
+        }
+    }
+    
+    force += collideSpheres(pos, rigidBodyPosition, vel.xyz, rigidBodyVelocity.xyz, collideAttraction, pos.w, radius);
+
+    float4 resultVel = vel + float4(force, 0.0f);
+
+#ifdef USE_TEX
+    newVelocityTexture[id.xy] = resultVel; 
+#else
+    newVelocityBuffer[index.x] = resultVel;
+#endif
+}
