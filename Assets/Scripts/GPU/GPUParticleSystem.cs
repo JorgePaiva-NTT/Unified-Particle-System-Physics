@@ -86,7 +86,8 @@ public class GPUParticleSystem : MonoBehaviour
     [SerializeField] float customTimeStep = 0.01f;
     [SerializeField] bool synchronizeTime = false;
 
-    private float groundLevel = 0.0f;
+    [SerializeField]
+    public float GroundLevel = -1.583f;
 
     private readonly Vector3 mWorldSize = new Vector3(2, 2, 2);
     private readonly Vector3 mGridSize = new Vector3(64, 64, 64);
@@ -419,7 +420,7 @@ public class GPUParticleSystem : MonoBehaviour
 
     private void UpdateFluid()
     {
-        fluidSolver.SetFloat("_GroundLevel", groundLevel);
+        fluidSolver.SetFloat("_GroundLevel", GroundLevel);
         fusion_FluidSolver.StepPhysics(customTimeStep);
         clothSolver.StepPhysics(customTimeStep);
 

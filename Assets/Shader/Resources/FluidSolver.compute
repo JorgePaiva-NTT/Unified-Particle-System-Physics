@@ -1,4 +1,3 @@
-
 //uniform variables for calculating CellID, AKA hash value
 float HashScale;
 float3 HashSize;
@@ -82,6 +81,7 @@ int NumParticles;
 //the bounding box for restricting particles inside the region (not working as expected)
 float3 BoundMin;
 float3 BoundMax;
+float _GroundLevel;
 
 float3 Velocity(int i)
 {
@@ -108,6 +108,12 @@ void PredictPositions(int id : SV_DispatchThreadID)
    {
 	   float3 velocity = Velocity(id);
 	   float3 predicted = PredictedPosition(id, velocity);
+
+	   if (predicted.y < _GroundLevel)
+	   {
+		   predicted.y = _GroundLevel;
+		   velocity *= 0.1;
+	   }
 
 	   VelocitiesWRITE[id] = float4(velocity, 0);
 	   PredictedWRITE[id] = float4(predicted, 0);
@@ -158,6 +164,15 @@ void ComputeDensityAndPressure(int id, float3 pi, out float density, out float p
    int3 hashIndex = HashIndex(pi);
    int3 size = HashSize;
    int sizexy = size.x * size.y;
+
+   // Ground plane ghost particles
+   float3 ghostPos = float3(pi.x, 2.0 * _GroundLevel - pi.y, pi.z);
+   float dist2_ghost = Length2(pi - ghostPos);
+   if (dist2_ghost < KernelRadius2)
+   {
+	   density += ParticleMass * Poly6Kernel(dist2_ghost);
+	   return;
+   }
 
    LOOP_START
 
@@ -360,7 +375,7 @@ float3 SolveClothColl(int id, float3 pi, float vi)
 	   
 		   if (dist2 < 0.03f) {
 			   float3 norm = diff / dist2;
-			   float3 relVel = VelocitiesREAD[n] - vi;
+			   float3 relVel = VelocitiesREAD[n].xyz - vi;
 			   float3 tanVel = relVel - (dot(relVel, norm) * norm) * 0.25;
 			   force += tanVel * dist2 * norm;
 		   }

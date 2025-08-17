@@ -22,7 +22,7 @@ namespace Assets.Scripts.GPU.Fluids
         public ParticlesFromBounds(float Interval, Bounds bounds, Bounds boundsForExclusion, bool isFluidContainer) : base(Interval)
         {
             Bounds = bounds;
-            BoundsForExclusion = new List<Bounds> {boundsForExclusion};
+            BoundsForExclusion = new List<Bounds> { boundsForExclusion };
             CreateParticles(isFluidContainer);
         }
 
@@ -35,7 +35,7 @@ namespace Assets.Scripts.GPU.Fluids
 
             if (numZ == 0)
                 numZ = 1;
-            
+
             Positions = new List<Vector3>();
 
             for (var z = 0; z < numZ; z++)
@@ -44,13 +44,14 @@ namespace Assets.Scripts.GPU.Fluids
                 {
                     for (var x = 0; x < numX; x++)
                     {
-                        var pos = new Vector3 {
+                        var pos = new Vector3
+                        {
                             x = Interval * x + Bounds.min.x + HalfInterval,
                             y = Interval * y + Bounds.min.y + HalfInterval,
                             z = Interval * z + Bounds.min.z + HalfInterval
                         };
 
-                        if (boundries && y >= 10)
+                        if (boundries && y >= 30)
                             continue;
 
                         var exclude = false;
