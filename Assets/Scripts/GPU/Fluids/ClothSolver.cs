@@ -34,7 +34,12 @@ namespace GPU.Fluids
         }
 
         public override void Dispose()
-        { }
+        {
+            // ClothSolver shares `controller` and `boundary` with FluidSolverN —
+            // those are disposed elsewhere (FluidSolverN.Dispose -> base, plus
+            // GPUParticleSystem.OnDestroy). We only own our own GridHash here.
+            Hash?.Dispose();
+        }
 
         public override void StepPhysics(float dt)
         {

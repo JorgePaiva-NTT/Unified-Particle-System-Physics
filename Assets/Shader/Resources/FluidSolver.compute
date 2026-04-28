@@ -70,6 +70,16 @@ StructuredBuffer<float4> Boundary;
 
 RWBuffer<int> phase;
 
+// Per-particle respawn timer (seconds since last respawn). Sized to NumParticles.
+RWStructuredBuffer<float> Ages;
+// Per-particle spawn position (sized to NumParticles). At reset time the
+// particle is teleported to InitialPositions[id].xyz + RespawnOffset.
+StructuredBuffer<float4> InitialPositions;
+// When > 0, fluid particles whose age exceeds this value are reset.
+float RespawnInterval;
+// World-space translation applied to InitialPositions on reset (target - centroid).
+float3 RespawnOffset;
+
 //several constants for the simulation
 float3 Gravity;
 float Dampning;
@@ -77,6 +87,12 @@ float DeltaTime;
 float Density;
 float Viscosity;
 float ParticleMass;
+float InterphaseBoundaryStrength;
+float PressureRelaxation;
+float ParticleRestDistance;
+float ParticleContactStiffness;
+float ParticleCohesion;
+float ParticleCohesionRadius;
 int NumParticles;
 //the bounding box for restricting particles inside the region (not working as expected)
 float3 BoundMin;
@@ -101,14 +117,47 @@ float3 PredictedPosition(int i, float3 velocity)
 [numthreads(THREADS, 1, 1)]
 void PredictPositions(int id : SV_DispatchThreadID)
 {
-   if (phase[id] != fluidId)
+	if (id >= NumParticles)
+		return;
+
+	if (phase[id] != fluidId)
 	   return;
 
-   if (id < NumParticles)
-   {
+	{
 	   float3 velocity = Velocity(id);
 	   float3 predicted = PredictedPosition(id, velocity);
 
+	   // Per-particle respawn timer. Each fluid particle ticks independently
+	   // (ages were randomized at spawn for a continuous stream). On reset we
+	   // overwrite Positions too, so UpdateVelocities later sees pi - p == 0
+	   // and won't synthesize a huge velocity.
+	   if (RespawnInterval > 0.0001f)
+	   {
+		   float age = Ages[id] + DeltaTime;
+		   if (age >= RespawnInterval)
+		   {
+			   float4 init = InitialPositions[id];
+			   predicted = init.xyz + RespawnOffset;
+			   velocity = float3(0, 0, 0);
+			   Positions[id] = float4(predicted, 1);
+			   age -= RespawnInterval;
+		   }
+		   Ages[id] = age;
+	   }
+
+	   // Hard simulation boundary: clamp predicted position to the BoundaryCube
+	   // AABB on all 6 faces. Damp the normal velocity component so particles
+	   // don't bounce out and tangential motion is mostly preserved.
+	   float boundaryDamp = 0.1f;
+	   if (predicted.x < BoundMin.x) { predicted.x = BoundMin.x; velocity.x = -velocity.x * boundaryDamp; }
+	   if (predicted.x > BoundMax.x) { predicted.x = BoundMax.x; velocity.x = -velocity.x * boundaryDamp; }
+	   if (predicted.y < BoundMin.y) { predicted.y = BoundMin.y; velocity.y = -velocity.y * boundaryDamp; }
+	   if (predicted.y > BoundMax.y) { predicted.y = BoundMax.y; velocity.y = -velocity.y * boundaryDamp; }
+	   if (predicted.z < BoundMin.z) { predicted.z = BoundMin.z; velocity.z = -velocity.z * boundaryDamp; }
+	   if (predicted.z > BoundMax.z) { predicted.z = BoundMax.z; velocity.z = -velocity.z * boundaryDamp; }
+
+	   // Legacy ground plane clamp (kept so the old _GroundLevel field still works
+	   // if it's above BoundMin.y).
 	   if (predicted.y < _GroundLevel)
 	   {
 		   predicted.y = _GroundLevel;
@@ -117,7 +166,7 @@ void PredictPositions(int id : SV_DispatchThreadID)
 
 	   VelocitiesWRITE[id] = float4(velocity, 0);
 	   PredictedWRITE[id] = float4(predicted, 0);
-   }
+	}
 }
 
 float Distance2(float3 a, float3 b)
@@ -171,7 +220,12 @@ void ComputeDensityAndPressure(int id, float3 pi, out float density, out float p
    if (dist2_ghost < KernelRadius2)
    {
 	   density += ParticleMass * Poly6Kernel(dist2_ghost);
-	   return;
+	   if (dist2_ghost > 1e-8f)
+	   {
+		   float3 gradC_j = -MassMulInvDensity * SpikyGradKernel(pi - ghostPos, dist2_ghost);
+		   sum_grad_C2 += dot(gradC_j, gradC_j);
+		   gradC_i -= gradC_j;
+	   }
    }
 
    LOOP_START
@@ -210,11 +264,18 @@ void ComputeDensityAndPressure(int id, float3 pi, out float density, out float p
 	   }
 
 	   if (dist2 >= KernelRadius2) continue;
+	   // Skip coincident particles: SpikyGradKernel divides by sqrt(dist2),
+	   // so dist2 ~ 0 produces Inf/NaN positions that then poison HashIndex
+	   // (NaN -> undefined cell), causing all particles to collapse into one
+	   // bucket and the solver to degrade to O(N^2).
+	   if (dist2 < 1e-8f) continue;
 
 	   if (n < NumParticles)
 	   {
+		   bool sameFluid = phase[n] == fluidId;
+		   float phaseBoundary = sameFluid ? 1.0f : InterphaseBoundaryStrength;
 		   density += ParticleMass * Poly6Kernel(dist2);
-		   float3 gradC_j = -MassMulInvDensity * SpikyGradKernel(diff, dist2);
+		   float3 gradC_j = -MassMulInvDensity * phaseBoundary * SpikyGradKernel(diff, dist2);
 		   sum_grad_C2 += dot(gradC_j, gradC_j);
 		   gradC_i -= gradC_j;
 	   }
@@ -242,7 +303,7 @@ void ComputeDensityAndPressure(int id, float3 pi, out float density, out float p
 	   //due to a vanishing gradient at the smoothing 
 	   //kernel borders. The value may need to increase
 	   //as the number of particles increase.
-	   float e = 150.0f;
+	   float e = max(PressureRelaxation, 0.0001f);
 	   pressure = -C / (sum_grad_C2 + e);
    }
 
@@ -254,21 +315,44 @@ void ComputeDensityAndPressure(int id, float3 pi, out float density, out float p
 [numthreads(THREADS, 1, 1)]
 void ComputeDensity(int id : SV_DispatchThreadID)
 {
-   //if (phase[id] != fluidId)
-   //    return;
+   if (id >= NumParticles)
+      return;
 
-   if (id < NumParticles)
-   {
-	   float3 pi = PredictedREAD[id].xyz;
+   if (phase[id] != fluidId)
+      return;
 
-	   float density, pressure;
-	   ComputeDensityAndPressure(id, pi, density, pressure);
+	float3 pi = PredictedREAD[id].xyz;
 
-	   Densities[id] = density;
-	   Pressures[id] = pressure;
+	float density, pressure;
+	ComputeDensityAndPressure(id, pi, density, pressure);
 
-   }
+	Densities[id] = density;
+	Pressures[id] = pressure;
 }
+
+float3 SolveSamePhaseSpacing(float3 diff, float dist2)
+{
+	float dist = sqrt(max(dist2, 1e-10f));
+	float3 dir = diff / dist;
+	float restDistance = max(ParticleRestDistance, 1e-5f);
+	float cohesionRadius = max(ParticleCohesionRadius, restDistance + 1e-5f);
+	float3 corr = float3(0, 0, 0);
+
+	float overlap = restDistance - dist;
+	if (overlap > 0.0f)
+	{
+		corr += dir * overlap * saturate(ParticleContactStiffness);
+	}
+	else if (ParticleCohesion > 0.0f && dist < cohesionRadius)
+	{
+		float t = saturate((dist - restDistance) / (cohesionRadius - restDistance));
+		float falloff = (1.0f - t) * (1.0f - t);
+		corr -= dir * (dist - restDistance) * falloff * ParticleCohesion;
+	}
+
+	return corr;
+}
+
 //helper function to calculate predicted positions for each particle
 float3 SolveDensity(int id, float3 pi, float pressure)
 {   
@@ -317,10 +401,24 @@ float3 SolveDensity(int id, float3 pi, float pressure)
 	   }
 	   
 	   if (dist2 >= KernelRadius2) continue;
+	   // Same coincident-particle guard as in ComputeDensityAndPressure.
+	   if (dist2 < 1e-8f) continue;
 	   if (n < NumParticles)
 	   {
 		   float3 gradW = SpikyGradKernel(diff, dist2);
-		   corr -= (pressure + Pressures[n]) * -MassMulInvDensity * gradW;
+		   if (phase[n] == fluidId)
+		   {
+			   corr -= (pressure + Pressures[n]) * -MassMulInvDensity * gradW;
+			   corr += SolveSamePhaseSpacing(diff, dist2);
+		   }
+		   else
+		   {
+			   // Different fluid phases act like a moving boundary: they occupy
+			   // space and push this phase back, but do not share pressure/lambda
+			   // state. This keeps different-density fluids from behaving like one
+			   // averaged fluid while still allowing contact.
+			   corr -= pressure * -MassMulInvDensity * InterphaseBoundaryStrength * gradW;
+		   }
 	   }
 	   else
 	   {
@@ -429,18 +527,18 @@ void SolveClothCollision(int id : SV_DispatchThreadID)
 [numthreads(THREADS, 1, 1)]
 void SolveConstraint(int id : SV_DispatchThreadID)
 {
-   //if (phase[id] != fluidId)
-   //    return;
+	if (id >= NumParticles)
+		return;
 
-   if (id < NumParticles)
-   {
-	   float3 pi = PredictedREAD[id].xyz;
-	   float pressure = Pressures[id];
+	if (phase[id] != fluidId)
+		return;
 
-	   pi += SolveDensity(id, pi, pressure);
+	float3 pi = PredictedREAD[id].xyz;
+	float pressure = Pressures[id];
 
-	   PredictedWRITE[id] = float4(pi, 0);
-   }
+	pi += SolveDensity(id, pi, pressure);
+
+	PredictedWRITE[id] = float4(pi, 0);
 }
 //the kernel that updates velocities according to the change of positions
 #pragma kernel UpdateVelocities
@@ -448,18 +546,18 @@ void SolveConstraint(int id : SV_DispatchThreadID)
 [numthreads(THREADS, 1, 1)]
 void UpdateVelocities(int id : SV_DispatchThreadID)
 {
+   if (id >= NumParticles)
+      return;
+
    if (phase[id] != fluidId)
 	   return;
 
-   if (id < NumParticles)
-   {
-	   float4 p = Positions[id];
-	   float4 pi = PredictedREAD[id];
+	float4 p = Positions[id];
+	float4 pi = PredictedREAD[id];
 
-	   float4 velocity = (pi - p) / DeltaTime;
+	float4 velocity = (pi - p) / DeltaTime;
 
-	   VelocitiesWRITE[id] = velocity;
-   }
+	VelocitiesWRITE[id] = velocity;
 }
 //the helper function for computing viscosities
 float3 ComputeViscosity(int id, float3 pi)
@@ -489,9 +587,9 @@ float3 ComputeViscosity(int id, float3 pi)
    for (int idx = bounds.x; idx <= bounds.y; idx++)
    {
 	   int n = IndexMap[idx].y;
+	   if (n == id || n >= NumParticles) continue;
 	   if (phase[n] != fluidId)
 		   continue;
-	   if (n == id || n >= NumParticles) continue;
 	   
 	   float3 pn = PredictedREAD[n].xyz;
 	   float dist2 = Distance2(pi, pn);
@@ -512,16 +610,17 @@ float3 ComputeViscosity(int id, float3 pi)
 [numthreads(THREADS, 1, 1)]
 void SolveViscosity(int id : SV_DispatchThreadID)
 {   
-   //if (phase[id] != fluidId)
-   //    return;
+	if (id >= NumParticles)
+		return;
 
-   if (id < NumParticles) {
-	   float3 pi = PredictedREAD[id].xyz;
+	if (phase[id] != fluidId)
+		return;
 
-	   float3 velocity = ComputeViscosity(id, pi);
+	float3 pi = PredictedREAD[id].xyz;
 
-	   VelocitiesWRITE[id] = float4(velocity, 0);
-   }
+	float3 velocity = ComputeViscosity(id, pi);
+
+	VelocitiesWRITE[id] = float4(velocity, 0);
 }
 
 //the kernel that finally updates the positions
@@ -530,10 +629,11 @@ void SolveViscosity(int id : SV_DispatchThreadID)
 [numthreads(THREADS, 1, 1)]
 void UpdatePositions(int id : SV_DispatchThreadID)
 {   
-   //if (phase[id] != fluidId)
-   //    return;
+	if (id >= NumParticles)
+		return;
 
-   if (id < NumParticles) {
-	   Positions[id] = PredictedREAD[id];
-   }
+	if (phase[id] != fluidId)
+		return;
+
+	Positions[id] = PredictedREAD[id];
 }

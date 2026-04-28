@@ -89,6 +89,45 @@ public class GPUParticleSystem : MonoBehaviour
     [SerializeField]
     public float GroundLevel = -1.583f;
 
+    [Tooltip("Cube GameObject whose world-space AABB is used as the hard simulation boundary. " +
+             "Particles are clamped inside this volume each frame.")]
+    public GameObject BoundaryCube;
+
+    [Tooltip("Optional cube/empty Transforms whose world-space AABB carves a hole " +
+             "out of the boundary particle shell. Use to create openings (drains, " +
+             "spouts) on any face of the pool. The hole is purely visual/collision: " +
+             "BoundaryCube still constrains particles unless removed too.")]
+    public Transform[] BoundaryHoles;
+
+    [Header("Respawn")]
+    [Tooltip("If set, fluid particles are teleported back to this transform's " +
+             "position when their per-particle timer hits RespawnInterval. " +
+             "Velocities are zeroed.")]
+    public Transform RespawnTarget;
+
+    [Tooltip("Per-particle respawn interval in seconds. Each fluid particle " +
+             "ticks its own timer (initialised to a random value in [0,interval) " +
+             "so they respawn in a continuous stream rather than all at once). " +
+             "Set <= 0 to disable.")]
+    public float RespawnInterval = 0f;
+
+    [Header("Rendering")]
+    [Tooltip("Draw the fluid/cloth particles as instanced spheres. Disable when " +
+             "rendering the fluid as a mesh via FluidMeshRenderer.")]
+    public bool RenderFluidParticles = true;
+    [Tooltip("Draw the static boundary particles as instanced spheres.")]
+    public bool RenderBoundaryParticles = true;
+
+    // GPU buffers driving the per-particle respawn (sized to bodyController.NumParticles).
+    private ComputeBuffer agesBuffer;
+    private ComputeBuffer initialPositionsBuffer;
+    // CPU snapshot of initial fluid positions + centroid (used to compute the
+    // offset pushed to the shader each frame, and for the manual context-menu
+    // "reset all now" path).
+    private Vector4[] initialFluidPositions;
+    private int fluidParticleCount;
+    private Vector3 initialFluidCentroid;
+
     private readonly Vector3 mWorldSize = new Vector3(2, 2, 2);
     private readonly Vector3 mGridSize = new Vector3(64, 64, 64);
     private Vector3 mWorldOrigin;
@@ -130,6 +169,10 @@ public class GPUParticleSystem : MonoBehaviour
     private void OnDestroy()
     {
         argsBuffer?.Dispose();
+
+        if (boundaryColorsBuffer != null) { boundaryColorsBuffer.Release(); boundaryColorsBuffer = null; }
+        if (agesBuffer != null) { agesBuffer.Release(); agesBuffer = null; }
+        if (initialPositionsBuffer != null) { initialPositionsBuffer.Release(); initialPositionsBuffer = null; }
 
         fusion_FluidBoundary?.Dispose();
         foreach (var item in fusion_FluidBody)
@@ -312,6 +355,30 @@ public class GPUParticleSystem : MonoBehaviour
 
     public int ConstraintComputeIterations = 2;
 
+    [Tooltip("How strongly particles from other fluid phases behave like a moving boundary. " +
+             "Raise this to keep different-density fluids separated; lower it if contact jitters.")]
+    [Range(0f, 3f)] public float InterphaseBoundaryStrength = 1.0f;
+
+    [Header("PBF Stability")]
+    [Tooltip("Lower values make density constraints stiffer. If particles overlap or collapse, lower this; if the fluid jitters, raise it.")]
+    [Range(1f, 150f)] public float PressureRelaxation = 35.0f;
+    [Tooltip("Minimum constraint iterations used while the water preset is enabled.")]
+    [Range(1, 8)] public int WaterConstraintIterations = 5;
+    [Tooltip("Desired same-phase spacing, as a multiplier of the visual particle diameter.")]
+    [Range(0.5f, 2.0f)] public float ParticleRestDistanceMultiplier = 1.15f;
+    [Tooltip("Extra short-range separation applied when same-phase particles overlap.")]
+    [Range(0f, 1f)] public float ParticleContactStiffness = 0.35f;
+    [Tooltip("Gentle same-phase attraction that helps sheets and surfaces close without adding much viscosity.")]
+    [Range(0f, 0.1f)] public float ParticleCohesion = 0.025f;
+    [Tooltip("Cohesion reach, as a multiplier of ParticleRestDistance.")]
+    [Range(1f, 4f)] public float ParticleCohesionRadiusMultiplier = 2.2f;
+
+    [Header("Water Physics")]
+    [Tooltip("Override per-chunk damping/viscosity with low values suited for water-like motion.")]
+    public bool UseWaterPhysicsPreset = true;
+    [Range(0f, 0.002f)] public float WaterViscosityCoeff = 0.00005f;
+    [Range(0f, 0.02f)] public float WaterDampingCoeff = 0.001f;
+
     //the thickness of fluid boundary
     public float BoundaryThickness = 1.0f;
 
@@ -323,6 +390,13 @@ public class GPUParticleSystem : MonoBehaviour
 
     private Camera camera1;
     private BodyController bodyController;
+
+    // Exposed for external renderers (e.g. FluidMeshRenderer) that need to
+    // read the live particle pool. Returns null until StartFluid has run.
+    public ComputeBuffer FluidPositionsBuffer => bodyController?.PositionsBuffer;
+    public ComputeBuffer FluidPhaseBuffer    => bodyController?.phaseBuffer;
+    public ComputeBuffer FluidColorsBuffer   => bodyController?.ParticleColors;
+    public int           FluidParticleCount  => fluidParticleCount;
 
     void InitializerCloth(int numBodies)
     {
@@ -382,8 +456,8 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 bounds = fusion_FluidBoundary.Bounds,
                 id = (byte)(counter + 3),
-                ViscosityCoeff = bd.ViscosityCoeff,
-                DampingCoeff = bd.DampingCoeff
+                ViscosityCoeff = UseWaterPhysicsPreset ? WaterViscosityCoeff : bd.ViscosityCoeff,
+                DampingCoeff = UseWaterPhysicsPreset ? WaterDampingCoeff : bd.DampingCoeff
             };
 
             var color = new Vector4(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1);
@@ -413,42 +487,182 @@ public class GPUParticleSystem : MonoBehaviour
             var size = (int)clothBody[b].width * (int)clothBody[b].height;
             clothSolver.SetupPressuresAndDensities(size, b);
         }
+
+        // Snapshot initial fluid positions for respawn. Fluid bodies are added
+        // before cloth in StartFluid, so their particles occupy the contiguous
+        // range [0, fluidParticleCount) inside BodyController's buffers.
+        fluidParticleCount = 0;
+        for (int i = 0; i < fusion_FluidBody.Length; i++)
+        {
+            if (fusion_FluidBody[i] == null) continue;
+            fluidParticleCount += fusion_FluidBody[i].source.NumParticles;
+        }
+        if (fluidParticleCount > 0)
+        {
+            initialFluidPositions = new Vector4[fluidParticleCount];
+            var sum = Vector3.zero;
+            for (int i = 0; i < fluidParticleCount; i++)
+            {
+                var p = bodyController.Positions[i];
+                initialFluidPositions[i] = p;
+                sum += new Vector3(p.x, p.y, p.z);
+            }
+            initialFluidCentroid = sum / fluidParticleCount;
+        }
+
+        // Per-particle respawn buffers. Sized to the full particle pool so
+        // that shader-side indexing matches NumParticles. Cloth slots are
+        // unused (the shader's phase guard skips them).
+        var totalCount = bodyController.NumParticles;
+        if (totalCount > 0)
+        {
+            agesBuffer = new ComputeBuffer(totalCount, sizeof(float));
+            initialPositionsBuffer = new ComputeBuffer(totalCount, 4 * sizeof(float));
+
+            var ages = new float[totalCount];
+            var inits = new Vector4[totalCount];
+            // Stagger: random initial ages in [0, interval). If interval is 0,
+            // ages stay at 0 (shader skips the reset block via its > 0 guard).
+            var stagger = RespawnInterval > 0f ? RespawnInterval : 0f;
+            for (int i = 0; i < totalCount; i++)
+            {
+                inits[i] = bodyController.Positions[i];
+                ages[i] = stagger > 0f ? Random.Range(0f, stagger) : 0f;
+            }
+            agesBuffer.SetData(ages);
+            initialPositionsBuffer.SetData(inits);
+
+            fusion_FluidSolver.Ages = agesBuffer;
+            fusion_FluidSolver.InitialPositions = initialPositionsBuffer;
+        }
+    }
+
+    [ContextMenu("Respawn All Fluid Now")]
+    public void RespawnFluidParticles()
+    {
+        // Manual "force all particles to respawn this frame" path: set every
+        // age past the interval. Useful for testing.
+        if (agesBuffer == null || RespawnInterval <= 0f) return;
+        var ages = new float[agesBuffer.count];
+        for (int i = 0; i < ages.Length; i++) ages[i] = RespawnInterval + 1f;
+        agesBuffer.SetData(ages);
     }
 
     Vector4[] data;
     public GameObject[] boundaryGos;
 
+    // Per-instance color buffer for the boundary particles. The instanced shader
+    // (Instanced/InstancedSurfaceShader) reads `particleColors[unity_InstanceID]`
+    // in setup(), so we must bind a buffer of length == boundary particle count.
+    // Allocated lazily on first UpdateFluid() call and released in OnDestroy.
+    private ComputeBuffer boundaryColorsBuffer;
+
+    private void EnsureBoundaryRenderState()
+    {
+        // Force the procedural-instancing shader. The material as authored in
+        // the inspector typically points at Standard, which silently ignores the
+        // procedural setup() and renders nothing useful.
+        var instancedShader = Shader.Find("Instanced/InstancedSurfaceShader");
+        if (instancedShader != null && BoundsParticleMat.shader != instancedShader)
+        {
+            BoundsParticleMat.shader = instancedShader;
+        }
+
+        if (boundaryColorsBuffer == null && fusion_FluidBoundary != null && fusion_FluidBoundary.NumParticles > 0)
+        {
+            boundaryColorsBuffer = new ComputeBuffer(fusion_FluidBoundary.NumParticles, 4 * sizeof(float));
+            var colors = new Vector4[fusion_FluidBoundary.NumParticles];
+            var c = new Vector4(0.1f, 0.1f, 0.1f, 0.35f);
+            for (int i = 0; i < colors.Length; i++) colors[i] = c;
+            boundaryColorsBuffer.SetData(colors);
+        }
+    }
+
     private void UpdateFluid()
     {
         fluidSolver.SetFloat("_GroundLevel", GroundLevel);
+
+        // Push hard simulation boundary from the BoundaryCube's world AABB.
+        // Set on the shader directly so PredictPositions can clamp on all 6 faces.
+        // Tell the solver not to overwrite these with its FluidBoundary AABB.
+        if (BoundaryCube != null)
+        {
+            Vector3 min, max;
+            var rend = BoundaryCube.GetComponent<Renderer>();
+            if (rend != null)
+            {
+                min = rend.bounds.min;
+                max = rend.bounds.max;
+            }
+            else
+            {
+                var t = BoundaryCube.transform;
+                var half = t.lossyScale * 0.5f;
+                min = t.position - half;
+                max = t.position + half;
+            }
+            fluidSolver.SetVector("BoundMin", min);
+            fluidSolver.SetVector("BoundMax", max);
+            fusion_FluidSolver.ExternalBoundsOverride = true;
+        }
+        else
+        {
+            fusion_FluidSolver.ExternalBoundsOverride = false;
+        }
+
+        // Per-particle respawn parameters. The buffers themselves are bound
+        // inside FluidSolverN.PredictPositions; we just push the live offset
+        // and interval each frame so RespawnTarget can move at runtime.
+        if (fluidParticleCount > 0)
+        {
+            var target = RespawnTarget != null ? RespawnTarget.position : initialFluidCentroid;
+            fusion_FluidSolver.RespawnInterval = RespawnInterval;
+            fusion_FluidSolver.RespawnOffset = target - initialFluidCentroid;
+        }
+
+        fusion_FluidSolver.InterphaseBoundaryStrength = InterphaseBoundaryStrength;
+        fusion_FluidSolver.DensityComputeIterations = DensityComputeIterations;
+        fusion_FluidSolver.ConstraintComputeIterations = UseWaterPhysicsPreset
+            ? Mathf.Max(ConstraintComputeIterations, WaterConstraintIterations)
+            : ConstraintComputeIterations;
+        fusion_FluidSolver.PressureRelaxation = PressureRelaxation;
+        fusion_FluidSolver.ParticleRestDistanceMultiplier = ParticleRestDistanceMultiplier;
+        fusion_FluidSolver.ParticleContactStiffness = ParticleContactStiffness;
+        fusion_FluidSolver.ParticleCohesion = ParticleCohesion;
+        fusion_FluidSolver.ParticleCohesionRadiusMultiplier = ParticleCohesionRadiusMultiplier;
+
         fusion_FluidSolver.StepPhysics(customTimeStep);
         clothSolver.StepPhysics(customTimeStep);
 
 
         //draw particles using GPU instancing
         //the draw function is defined in fluid body class
-        bodyController.Draw(mesh, mat, props, camera1);
+        if (RenderFluidParticles)
+        {
+            bodyController.Draw(mesh, mat, props, camera1);
+        }
 
 
         //Draw bounds
-        var args = new uint[5] { 0, 0, 0, 0, 0 };
-        args[0] = mesh.GetIndexCount(0);
-        args[1] = (uint)fusion_FluidBoundary.NumParticles;
+        // (DrawMeshInstancedProcedural takes the instance count directly; no args
+        // buffer is required, so we don't allocate one here. Allocating a fresh
+        // ComputeBuffer per frame without disposing it leaks native handles.)
+        if (RenderBoundaryParticles)
+        {
+            EnsureBoundaryRenderState();
+            BoundsParticleMat.SetBuffer(Shader.PropertyToID("positions"), fusion_FluidBoundary.PositionsBuffer);
+            BoundsParticleMat.SetBuffer(Shader.PropertyToID("particleColors"), boundaryColorsBuffer);
+            BoundsParticleMat.SetFloat(Shader.PropertyToID("Diameter"), ParticleDiameter);
+            BoundsParticleMat.SetInt(Shader.PropertyToID("numPart"), fusion_FluidBoundary.NumParticles);
 
-        var m_argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-        m_argsBuffer.SetData(args);
+            const ShadowCastingMode castShadow = ShadowCastingMode.Off;
+            const bool receiveShadow = false;
 
-        BoundsParticleMat.SetBuffer(Shader.PropertyToID("positions"), fusion_FluidBoundary.PositionsBuffer);
-        BoundsParticleMat.SetFloat(Shader.PropertyToID("Diameter"), ParticleDiameter);
-        BoundsParticleMat.SetInt(Shader.PropertyToID("numPart"), fusion_FluidBoundary.NumParticles);
-
-        const ShadowCastingMode castShadow = ShadowCastingMode.Off;
-        const bool receiveShadow = false;
-
-        Graphics.DrawMeshInstancedProcedural(
-            mesh, 0, BoundsParticleMat,
-            new Bounds(Vector3.zero, new Vector3(10, 10, 10)),
-            fusion_FluidBoundary.NumParticles, props, castShadow, receiveShadow);
+            Graphics.DrawMeshInstancedProcedural(
+                mesh, 0, BoundsParticleMat,
+                new Bounds(Vector3.zero, new Vector3(10, 10, 10)),
+                fusion_FluidBoundary.NumParticles, props, castShadow, receiveShadow);
+        }
         //Draw bounds
     }
 
@@ -488,6 +702,41 @@ public class GPUParticleSystem : MonoBehaviour
         //The source will create a array of particles
         //evenly spaced between the inner and outer bounds.
         ParticleSource source = new ParticlesFromBounds(diameter, outerBounds, innerBounds, true);
+
+        // Carve holes out of the boundary shell using the world-space AABBs of
+        // BoundaryHoles transforms. Done here (after the source has generated
+        // its grid) so we don't have to extend the source's constructor API.
+        if (BoundaryHoles != null && BoundaryHoles.Length > 0)
+        {
+            var holeAabbs = new List<Bounds>(BoundaryHoles.Length);
+            foreach (var h in BoundaryHoles)
+            {
+                if (h == null) continue;
+                var hr = h.GetComponent<Renderer>();
+                if (hr != null)
+                {
+                    holeAabbs.Add(hr.bounds);
+                }
+                else
+                {
+                    holeAabbs.Add(new Bounds(h.position, h.lossyScale));
+                }
+            }
+            if (holeAabbs.Count > 0)
+            {
+                // RemoveAll mutates the list in place — needed because
+                // ParticleSource.Positions has a protected setter.
+                source.Positions.RemoveAll(p =>
+                {
+                    for (int b = 0; b < holeAabbs.Count; b++)
+                    {
+                        if (holeAabbs[b].Contains(p)) return true;
+                    }
+                    return false;
+                });
+            }
+        }
+
         //print out the number of particles
         Debug.Log("Boundary Particles = " + source.NumParticles);
 

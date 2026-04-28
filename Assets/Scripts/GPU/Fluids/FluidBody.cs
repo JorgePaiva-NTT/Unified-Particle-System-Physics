@@ -8,15 +8,15 @@ namespace Assets.Scripts.GPU.Fluids
     public class FluidBody : Body
     {
         //Viscosity constant
-        public float ViscosityCoeff { get; set; } = 0.0005f;
+        public float ViscosityCoeff { get; set; } = 0.00005f;
         //velocity damping coefficient
-        public float DampingCoeff { get; set; } = 0.01f;
+        public float DampingCoeff { get; set; } = 0.001f;
 
         public FluidBody( BodyController controller, ParticleSource source, float density, Matrix4x4 rts, Vector3 initialVel)
         : base(controller, source, density, rts, initialVel)
         {
-            ViscosityCoeff = 0.0005f;
-            DampingCoeff = 0.01f;
+            ViscosityCoeff = 0.00005f;
+            DampingCoeff = 0.001f;
         }
 
         public override void CreateParticles(Vector4 color)

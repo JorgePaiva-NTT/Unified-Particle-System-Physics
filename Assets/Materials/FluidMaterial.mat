@@ -7,15 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: boundMat
-  m_Shader: {fileID: 4800000, guid: 50c34b280c5399e42b78ec8dfed528f0, type: 3}
+  m_Name: FluidMaterial
+  m_Shader: {fileID: 4800000, guid: cb7b7900aeabd0049b57ae8c5c04c356, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _EMISSION
-  m_LightmapFlags: 0
-  m_EnableInstancingVariants: 1
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -62,42 +61,52 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlendOp: 0
     - _BumpScale: 1
-    - _CameraFadingEnabled: 0
-    - _CameraFarFadeDistance: 2
-    - _CameraNearFadeDistance: 1
-    - _Cull: 2
     - _Cutoff: 0.5
+    - _DeepPhaseStrength: 0.04
+    - _DensitySoftness: 1.45
+    - _DepthAlphaBoost: 0.3
     - _DetailNormalMapScale: 1
-    - _DistortionBlend: 0.5
-    - _DistortionEnabled: 0
-    - _DistortionStrength: 1
-    - _DistortionStrengthScaled: 0
     - _DstBlend: 0
-    - _EmissionEnabled: 0
-    - _FlipbookMode: 0
+    - _ExitSearchDistance: 1.6
+    - _ExitSearchSteps: 24
+    - _FresnelBoost: 0.42
+    - _FresnelPower: 2.2
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InvFade: 1
-    - _LightingEnabled: 1
+    - _IndexOfRefraction: 1.333
+    - _LightAbsorption: 0.06
+    - _LightMarchDistance: 2.8
+    - _LightMarchSteps: 10
+    - _LightPenetration: 6
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _Opacity: 1
+    - _OpticalDepthScale: 8
     - _Parallax: 0.02
+    - _RayMarchJitter: 0.45
+    - _RefractionSteps: 4
+    - _RefractionStrength: 0.045
+    - _ScatterPhaseStrength: 0.9
+    - _ScatteringStrength: 0.85
+    - _Smoothness: 0.96
     - _SmoothnessTextureChannel: 0
-    - _SoftParticlesEnabled: 0
-    - _SoftParticlesFarFadeDistance: 1
-    - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SurfaceReflection: 0.22
+    - _TransmissionStrength: 0.86
     - _UVSec: 0
+    - _UsePerVertexColor: 0.12
+    - _ViewAbsorption: 0.42
+    - _ViewMarchDistance: 0.9
+    - _ViewMarchSteps: 16
+    - _VolumeLighting: 0.55
     - _ZWrite: 1
     m_Colors:
-    - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 0.86, g: 0.96, b: 1, a: 0.78}
+    - _DeepTint: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
-    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _ScatterTint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

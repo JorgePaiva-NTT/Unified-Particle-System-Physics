@@ -1,0 +1,390 @@
+// Marching cubes mesh extraction from a particle density volume.
+// See Assets/Scripts/GPU/Rendering/FluidMeshRenderer.cs for the C# orchestrator.
+
+#pragma kernel ClearDensity
+#pragma kernel SplatParticles
+#pragma kernel SmoothDensity
+#pragma kernel ResetCounter
+#pragma kernel MarchingCubes
+#pragma kernel BuildArgs
+
+#define THREADS_3D 8
+#define THREADS_1D 256
+
+// ---------- Uniforms ----------
+float3 VolumeOrigin;     // world-space min corner of the volume
+float3 VolumeSize;       // world-space extent
+float3 VoxelSize;        // VolumeSize / Resolution (component-wise)
+uint3  Resolution;       // voxel grid resolution (must match buffer sizes)
+float  SplatRadius;      // world-space splat radius
+float  SplatFalloffPower;
+float  SplatDensityBoost;
+float  DensityScale;     // fixed-point scaling factor used by InterlockedAdd
+float  IsoLevel;         // density threshold for the surface
+uint   FluidNumParticles;
+int    MaxSplatVoxels;   // max particle footprint radius in voxels
+int    SmoothingRadiusVoxels;
+float  SmoothingStrength;
+float  PhaseBoundarySharpness;
+int    FluidPhaseMin;    // particles whose phase is in [min,max] are splatted
+int    FluidPhaseMax;
+
+// ---------- Buffers ----------
+RWStructuredBuffer<uint>   Density;            // size = R.x*R.y*R.z, fixed-point
+RWStructuredBuffer<uint>   ColorAccum;         // size = R.x*R.y*R.z * 3 (RGB * weight)
+RWStructuredBuffer<uint>   DominantWeight;     // strongest individual splat per voxel, packed weight+phase
+RWStructuredBuffer<uint>   DominantColor;      // strongest splat color per voxel, packed RGB8 with valid bit
+StructuredBuffer<uint>     DensityREAD;
+StructuredBuffer<uint>     ColorAccumREAD;
+RWStructuredBuffer<uint>   DensityWRITE;
+RWStructuredBuffer<uint>   ColorAccumWRITE;
+StructuredBuffer<float4>   ParticlePositions;  // bodyController.PositionsBuffer
+StructuredBuffer<int>      ParticlePhase;      // bodyController.phaseBuffer
+StructuredBuffer<float4>   ParticleColors;     // bodyController.ParticleColors
+
+StructuredBuffer<int>      TriTable;           // 256*16, see MarchingCubesTables.cs
+
+struct Vert
+{
+    float3 position;
+    float3 normal;
+    float3 color;
+};
+struct Tri
+{
+    Vert v0;
+    Vert v1;
+    Vert v2;
+};
+AppendStructuredBuffer<Tri> Triangles;
+
+// Indirect-args output (6 uints; we use the first 4 for DrawProceduralIndirect).
+RWStructuredBuffer<uint>   DrawArgs;
+// Source append-counter (CopyCount destination from C#).
+StructuredBuffer<uint>     TriCount;
+
+// ---------- Helpers ----------
+uint VoxelIndex(uint3 c)
+{
+    return c.x + c.y * Resolution.x + c.z * Resolution.x * Resolution.y;
+}
+
+float SampleDensity(int3 c)
+{
+    c = clamp(c, int3(0, 0, 0), int3(Resolution) - 1);
+    return (float)Density[VoxelIndex(uint3(c))] / DensityScale;
+}
+
+float3 SampleColor(int3 c)
+{
+    c = clamp(c, int3(0, 0, 0), int3(Resolution) - 1);
+    uint idx = VoxelIndex(uint3(c));
+    uint weight = Density[idx];
+    if (weight == 0) return float3(1, 1, 1);
+    float invW = 1.0 / (float)weight;
+    // ColorAccum stores (color * weight) where weight has the same fixed-point
+    // scale as Density. Dividing by Density recovers the weighted-mean color
+    // directly in [0,1]; no second division by DensityScale.
+    float3 averagedColor = float3(
+        (float)ColorAccum[idx * 3 + 0] * invW,
+        (float)ColorAccum[idx * 3 + 1] * invW,
+        (float)ColorAccum[idx * 3 + 2] * invW);
+
+    uint packedColor = DominantColor[idx];
+    if ((packedColor & 0xFF000000u) == 0u) return averagedColor;
+
+    float3 dominantColor = float3(
+        (float)((packedColor >> 16) & 0xFFu),
+        (float)((packedColor >> 8) & 0xFFu),
+        (float)(packedColor & 0xFFu)) / 255.0;
+
+    return lerp(averagedColor, dominantColor, saturate(PhaseBoundarySharpness));
+}
+
+uint PackColorRGB8(float3 color)
+{
+    uint3 q = (uint3)round(saturate(color) * 255.0);
+    return 0x01000000u | (q.r << 16) | (q.g << 8) | q.b;
+}
+
+float3 VoxelCornerWorld(int3 c)
+{
+    // Corners sit on the voxel grid (not at cell centers) so adjacent cubes
+    // share corners without seams in the extracted mesh.
+    return VolumeOrigin + float3(c) * VoxelSize;
+}
+
+float BlurWeight(int3 offset)
+{
+    float dist2 = dot(float3(offset), float3(offset));
+    return exp(-dist2 * 0.5);
+}
+
+// ---------- Kernels ----------
+[numthreads(THREADS_3D, THREADS_3D, THREADS_3D)]
+void ClearDensity(uint3 id : SV_DispatchThreadID)
+{
+    if (any(id >= Resolution)) return;
+    uint idx = VoxelIndex(id);
+    Density[idx] = 0;
+    ColorAccum[idx * 3 + 0] = 0;
+    ColorAccum[idx * 3 + 1] = 0;
+    ColorAccum[idx * 3 + 2] = 0;
+    DominantWeight[idx] = 0;
+    DominantColor[idx] = 0;
+}
+
+[numthreads(THREADS_1D, 1, 1)]
+void SplatParticles(uint id : SV_DispatchThreadID)
+{
+    if (id >= FluidNumParticles) return;
+    int p = ParticlePhase[id];
+    if (p < FluidPhaseMin || p > FluidPhaseMax) return;
+
+    float3 pos = ParticlePositions[id].xyz;
+    float3 particleCol = ParticleColors[id].rgb;
+    float3 local = (pos - VolumeOrigin) / VoxelSize; // fractional voxel coords
+    int3 center = int3(floor(local));
+
+    // Footprint radius in voxels. Higher marching-cubes resolutions make
+    // SplatRadius cover more cells, so this cap must rise with resolution or
+    // the density field gets clipped into hard-edged blobs.
+    int maxFootprint = max(MaxSplatVoxels, 1);
+    int rx = clamp((int)ceil(SplatRadius / VoxelSize.x), 1, maxFootprint);
+    int ry = clamp((int)ceil(SplatRadius / VoxelSize.y), 1, maxFootprint);
+    int rz = clamp((int)ceil(SplatRadius / VoxelSize.z), 1, maxFootprint);
+
+    float r2 = SplatRadius * SplatRadius;
+    float invR2 = 1.0 / r2;
+
+    [loop] for (int dz = -rz; dz <= rz; dz++)
+    [loop] for (int dy = -ry; dy <= ry; dy++)
+    [loop] for (int dx = -rx; dx <= rx; dx++)
+    {
+        int3 c = center + int3(dx, dy, dz);
+        if (any(c < 0) || any(c >= int3(Resolution))) continue;
+
+        float3 voxelWorld = VoxelCornerWorld(c);
+        float3 d = voxelWorld - pos;
+        float dist2 = dot(d, d);
+        if (dist2 >= r2) continue;
+
+        // Poly6-like falloff, but with tunable power/boost. Higher power keeps
+        // the iso-surface closer to the particle instead of swelling into a
+        // broad metaball; boost lets an isolated particle still cross IsoLevel.
+        float t = 1.0 - dist2 * invR2;
+        float w = pow(saturate(t), max(SplatFalloffPower, 0.25)) * max(SplatDensityBoost, 0.0);
+
+        uint scaled = (uint)(w * DensityScale);
+        if (scaled > 0)
+        {
+            uint vidx = VoxelIndex(uint3(c));
+            InterlockedAdd(Density[vidx], scaled);
+            // Splat color * weight into the accumulator. Same fixed-point
+            // scale as density, so dividing by Density[idx] in MC recovers
+            // the weighted-mean color.
+            uint cR = (uint)(particleCol.r * (float)scaled);
+            uint cG = (uint)(particleCol.g * (float)scaled);
+            uint cB = (uint)(particleCol.b * (float)scaled);
+            if (cR > 0) InterlockedAdd(ColorAccum[vidx * 3 + 0], cR);
+            if (cG > 0) InterlockedAdd(ColorAccum[vidx * 3 + 1], cG);
+            if (cB > 0) InterlockedAdd(ColorAccum[vidx * 3 + 2], cB);
+
+            // Track the strongest single phase contribution in this voxel.
+            // This lets rendering preserve a hard phase/color boundary instead
+            // of always averaging non-mixing fluids together.
+            uint rankWeight = min(scaled, 0x00FFFFFFu);
+            uint packedRank = (rankWeight << 8) | ((uint)p & 0xFFu);
+            uint oldRank;
+            InterlockedMax(DominantWeight[vidx], packedRank, oldRank);
+            if (packedRank > oldRank)
+            {
+                DominantColor[vidx] = PackColorRGB8(particleCol);
+            }
+        }
+    }
+}
+
+[numthreads(THREADS_3D, THREADS_3D, THREADS_3D)]
+void SmoothDensity(uint3 id : SV_DispatchThreadID)
+{
+    if (any(id >= Resolution)) return;
+
+    uint idx = VoxelIndex(id);
+    int radius = clamp(SmoothingRadiusVoxels, 0, 2);
+    float strength = saturate(SmoothingStrength);
+
+    if (radius == 0 || strength <= 0.0)
+    {
+        DensityWRITE[idx] = DensityREAD[idx];
+        ColorAccumWRITE[idx * 3 + 0] = ColorAccumREAD[idx * 3 + 0];
+        ColorAccumWRITE[idx * 3 + 1] = ColorAccumREAD[idx * 3 + 1];
+        ColorAccumWRITE[idx * 3 + 2] = ColorAccumREAD[idx * 3 + 2];
+        return;
+    }
+
+    float densitySum = 0.0;
+    float3 colorSum = 0.0;
+    float weightSum = 0.0;
+    int3 center = int3(id);
+
+    [loop] for (int z = -radius; z <= radius; z++)
+    [loop] for (int y = -radius; y <= radius; y++)
+    [loop] for (int x = -radius; x <= radius; x++)
+    {
+        int3 c = center + int3(x, y, z);
+        if (any(c < 0) || any(c >= int3(Resolution))) continue;
+
+        uint nidx = VoxelIndex(uint3(c));
+        float weight = BlurWeight(int3(x, y, z));
+        densitySum += (float)DensityREAD[nidx] * weight;
+        colorSum += float3(
+            (float)ColorAccumREAD[nidx * 3 + 0],
+            (float)ColorAccumREAD[nidx * 3 + 1],
+            (float)ColorAccumREAD[nidx * 3 + 2]) * weight;
+        weightSum += weight;
+    }
+
+    float invWeight = 1.0 / max(weightSum, 1e-5);
+    float densityBlur = densitySum * invWeight;
+    float3 colorBlur = colorSum * invWeight;
+
+    float densityOut = lerp((float)DensityREAD[idx], densityBlur, strength);
+    float3 colorOut = lerp(float3(
+        (float)ColorAccumREAD[idx * 3 + 0],
+        (float)ColorAccumREAD[idx * 3 + 1],
+        (float)ColorAccumREAD[idx * 3 + 2]), colorBlur, strength);
+
+    DensityWRITE[idx] = (uint)max(densityOut, 0.0);
+    ColorAccumWRITE[idx * 3 + 0] = (uint)max(colorOut.r, 0.0);
+    ColorAccumWRITE[idx * 3 + 1] = (uint)max(colorOut.g, 0.0);
+    ColorAccumWRITE[idx * 3 + 2] = (uint)max(colorOut.b, 0.0);
+}
+
+// Resets the indirect-args buffer to a known-good baseline. C# calls
+// ComputeBuffer.SetCounterValue(0) on the AppendStructuredBuffer separately.
+[numthreads(1, 1, 1)]
+void ResetCounter(uint3 id : SV_DispatchThreadID)
+{
+    DrawArgs[0] = 0; // vertex count, filled in by BuildArgs
+    DrawArgs[1] = 1; // instance count
+    DrawArgs[2] = 0; // start vertex
+    DrawArgs[3] = 0; // start instance
+}
+
+[numthreads(THREADS_3D, THREADS_3D, THREADS_3D)]
+void MarchingCubes(uint3 id : SV_DispatchThreadID)
+{
+    // Each thread handles the cube whose minimum corner is at `id`.
+    // We need cubes in the inclusive range [0, Resolution-2] so that
+    // corner+1 stays in range.
+    if (any(id + 1 >= Resolution)) return;
+
+    int3 c = int3(id);
+
+    int3 corner[8];
+    corner[0] = c + int3(0, 0, 0);
+    corner[1] = c + int3(1, 0, 0);
+    corner[2] = c + int3(1, 1, 0);
+    corner[3] = c + int3(0, 1, 0);
+    corner[4] = c + int3(0, 0, 1);
+    corner[5] = c + int3(1, 0, 1);
+    corner[6] = c + int3(1, 1, 1);
+    corner[7] = c + int3(0, 1, 1);
+
+    float d[8];
+    [unroll] for (int i = 0; i < 8; i++) d[i] = SampleDensity(corner[i]);
+
+    uint caseIdx = 0;
+    [unroll] for (int j = 0; j < 8; j++)
+    {
+        if (d[j] >= IsoLevel) caseIdx |= (1u << j);
+    }
+    if (caseIdx == 0 || caseIdx == 255) return;
+
+    // Edge -> two corner indices (matches MarchingCubesTables.cs comment block).
+    int2 edgeCorners[12];
+    edgeCorners[0]  = int2(0, 1);
+    edgeCorners[1]  = int2(1, 2);
+    edgeCorners[2]  = int2(2, 3);
+    edgeCorners[3]  = int2(3, 0);
+    edgeCorners[4]  = int2(4, 5);
+    edgeCorners[5]  = int2(5, 6);
+    edgeCorners[6]  = int2(6, 7);
+    edgeCorners[7]  = int2(7, 4);
+    edgeCorners[8]  = int2(0, 4);
+    edgeCorners[9]  = int2(1, 5);
+    edgeCorners[10] = int2(2, 6);
+    edgeCorners[11] = int2(3, 7);
+
+    // Compute interpolated edge vertices on demand (cheap: at most 5 of the
+    // 12 are read, but always doing all keeps control flow simple).
+    float3 edgeVerts[12];
+    float3 edgeNormals[12];
+    float3 edgeColors[12];
+
+    [unroll] for (int e = 0; e < 12; e++)
+    {
+        int a = edgeCorners[e].x;
+        int b = edgeCorners[e].y;
+        float da = d[a];
+        float db = d[b];
+        float denom = (db - da);
+        float t = abs(denom) > 1e-5 ? (IsoLevel - da) / denom : 0.5;
+        t = saturate(t);
+
+        float3 pa = VoxelCornerWorld(corner[a]);
+        float3 pb = VoxelCornerWorld(corner[b]);
+        edgeVerts[e] = lerp(pa, pb, t);
+
+        float3 ca = SampleColor(corner[a]);
+        float3 cb = SampleColor(corner[b]);
+        edgeColors[e] = lerp(ca, cb, t);
+
+        // Per-corner gradient via central differences, then interpolate.
+        float3 ga = float3(
+            SampleDensity(corner[a] + int3(1, 0, 0)) - SampleDensity(corner[a] - int3(1, 0, 0)),
+            SampleDensity(corner[a] + int3(0, 1, 0)) - SampleDensity(corner[a] - int3(0, 1, 0)),
+            SampleDensity(corner[a] + int3(0, 0, 1)) - SampleDensity(corner[a] - int3(0, 0, 1)));
+        float3 gb = float3(
+            SampleDensity(corner[b] + int3(1, 0, 0)) - SampleDensity(corner[b] - int3(1, 0, 0)),
+            SampleDensity(corner[b] + int3(0, 1, 0)) - SampleDensity(corner[b] - int3(0, 1, 0)),
+            SampleDensity(corner[b] + int3(0, 0, 1)) - SampleDensity(corner[b] - int3(0, 0, 1)));
+        // Density is highest inside the fluid and falls off outside. With the
+        // case-index convention `bit = (d >= IsoLevel)` (corners inside set),
+        // the outward-facing surface normal points along +gradient (from
+        // higher density toward lower).
+        edgeNormals[e] = normalize(lerp(ga, gb, t) + float3(0, 1e-6, 0));
+    }
+
+    [loop] for (int ti = 0; ti < 16; ti += 3)
+    {
+        int e0 = TriTable[caseIdx * 16 + ti + 0];
+        if (e0 < 0) break;
+        int e1 = TriTable[caseIdx * 16 + ti + 1];
+        int e2 = TriTable[caseIdx * 16 + ti + 2];
+
+        Tri tri;
+        tri.v0.position = edgeVerts[e0];
+        tri.v0.normal   = edgeNormals[e0];
+        tri.v0.color    = edgeColors[e0];
+        tri.v1.position = edgeVerts[e1];
+        tri.v1.normal   = edgeNormals[e1];
+        tri.v1.color    = edgeColors[e1];
+        tri.v2.position = edgeVerts[e2];
+        tri.v2.normal   = edgeNormals[e2];
+        tri.v2.color    = edgeColors[e2];
+
+        Triangles.Append(tri);
+    }
+}
+
+[numthreads(1, 1, 1)]
+void BuildArgs(uint3 id : SV_DispatchThreadID)
+{
+    // CopyCount(append, TriCount, 0) was issued from C# before this dispatch.
+    DrawArgs[0] = TriCount[0] * 3u; // vertex count for non-indexed draw
+    DrawArgs[1] = 1;
+    DrawArgs[2] = 0;
+    DrawArgs[3] = 0;
+}

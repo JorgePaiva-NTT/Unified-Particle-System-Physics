@@ -167,6 +167,12 @@ namespace GPU
             STDUtils.Release(PredictedBuffer);
             STDUtils.Release(VelocitiesBuffer);
             STDUtils.Release(ref m_argsBuffer);
+            // phaseBuffer / DensitiesBuffer / PressuresBuffer are properties, so we
+            // can't pass them by ref. Release directly and null the property.
+            if (phaseBuffer != null) { phaseBuffer.Release(); phaseBuffer = null; }
+            if (DensitiesBuffer != null) { DensitiesBuffer.Release(); DensitiesBuffer = null; }
+            if (PressuresBuffer != null) { PressuresBuffer.Release(); PressuresBuffer = null; }
+            if (cpuClothData != null) { cpuClothData.Release(); cpuClothData = null; }
         }
     }
 }

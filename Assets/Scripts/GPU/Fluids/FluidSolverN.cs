@@ -24,8 +24,27 @@ namespace GPU.Fluids
         public int DensityComputeIterations { get; set; }
         //the number of constraint iterations
         public int ConstraintComputeIterations { get; set; }
+        public float InterphaseBoundaryStrength { get; set; } = 1.0f;
+        public float PressureRelaxation { get; set; } = 35.0f;
+        public float ParticleRestDistanceMultiplier { get; set; } = 1.15f;
+        public float ParticleContactStiffness { get; set; } = 0.35f;
+        public float ParticleCohesion { get; set; } = 0.025f;
+        public float ParticleCohesionRadiusMultiplier { get; set; } = 2.2f;
         //the smoothing Kernel object, contains the mathematical calculations of various Kernels
         public SmoothingKernel Kernel { get; private set; }
+
+        // When true, FluidSolverN will not push BoundMin/BoundMax to the shader
+        // (e.g. because GPUParticleSystem is driving them from a BoundaryCube).
+        public bool ExternalBoundsOverride { get; set; }
+
+        // Per-particle respawn (driven by GPUParticleSystem). When all of these
+        // are set and RespawnInterval > 0, PredictPositions resets fluid
+        // particles whose age exceeds the interval. Buffers must be sized to
+        // controller.NumParticles.
+        public ComputeBuffer Ages { get; set; }
+        public ComputeBuffer InitialPositions { get; set; }
+        public float RespawnInterval { get; set; }
+        public Vector3 RespawnOffset { get; set; }
 
         public FluidSolverN(
             BodyController controller, FluidBody[] body, FluidBoundary boundary, 
@@ -75,6 +94,14 @@ namespace GPU.Fluids
                 fluidSolverShader.SetFloat("Density", body.density);
                 fluidSolverShader.SetFloat("Viscosity", body.ViscosityCoeff);
                 fluidSolverShader.SetFloat("ParticleMass", controller.ParticleMass);
+                fluidSolverShader.SetFloat("InterphaseBoundaryStrength", InterphaseBoundaryStrength);
+                fluidSolverShader.SetFloat("PressureRelaxation", PressureRelaxation);
+
+                float restDistance = controller.ParticleDiameter * Mathf.Max(ParticleRestDistanceMultiplier, 0.01f);
+                fluidSolverShader.SetFloat("ParticleRestDistance", restDistance);
+                fluidSolverShader.SetFloat("ParticleContactStiffness", ParticleContactStiffness);
+                fluidSolverShader.SetFloat("ParticleCohesion", ParticleCohesion);
+                fluidSolverShader.SetFloat("ParticleCohesionRadius", restDistance * Mathf.Max(ParticleCohesionRadiusMultiplier, 1.0f));
 
                 fluidSolverShader.SetFloat("KernelRadius", Kernel.Radius);
                 fluidSolverShader.SetFloat("KernelRadius2", Kernel.Radius2);
@@ -87,8 +114,11 @@ namespace GPU.Fluids
                 fluidSolverShader.SetVector("HashSize", Hash.Bounds.size);
                 fluidSolverShader.SetVector("HashTranslate", Hash.Bounds.min);
 
-                fluidSolverShader.SetVector("BoundMin", boundary.Bounds.min);
-                fluidSolverShader.SetVector("BoundMax", boundary.Bounds.max);
+                if (!ExternalBoundsOverride)
+                {
+                    fluidSolverShader.SetVector("BoundMin", boundary.Bounds.min);
+                    fluidSolverShader.SetVector("BoundMax", boundary.Bounds.max);
+                }
 
                 fluidSolverShader.SetInt("fluidId", body.id);
 
@@ -123,6 +153,23 @@ namespace GPU.Fluids
             fluidSolverShader.SetBuffer(kernel, "VelocitiesREAD", controller.VelocitiesBuffer[READ]);
             fluidSolverShader.SetBuffer(kernel, "VelocitiesWRITE", controller.VelocitiesBuffer[WRITE]);
             fluidSolverShader.SetBuffer(kernel, "phase", controller.phaseBuffer);
+
+            // Per-particle respawn. Bind dummy/zero values when not configured;
+            // the shader's RespawnInterval > 0 guard skips the work.
+            if (Ages != null && InitialPositions != null && RespawnInterval > 0f)
+            {
+                fluidSolverShader.SetBuffer(kernel, "Ages", Ages);
+                fluidSolverShader.SetBuffer(kernel, "InitialPositions", InitialPositions);
+                fluidSolverShader.SetFloat("RespawnInterval", RespawnInterval);
+                fluidSolverShader.SetVector("RespawnOffset", RespawnOffset);
+            }
+            else
+            {
+                // Buffers still need to be bound (otherwise dispatch fails).
+                if (Ages != null) fluidSolverShader.SetBuffer(kernel, "Ages", Ages);
+                if (InitialPositions != null) fluidSolverShader.SetBuffer(kernel, "InitialPositions", InitialPositions);
+                fluidSolverShader.SetFloat("RespawnInterval", 0f);
+            }
 
             fluidSolverShader.Dispatch(kernel, Groups, 1, 1);
 
