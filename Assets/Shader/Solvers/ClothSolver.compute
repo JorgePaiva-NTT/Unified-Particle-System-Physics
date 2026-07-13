@@ -65,12 +65,13 @@ float DampingConst;
 float DeltaT;
 float DeltaT2;
 float nodeMass;
-float damping;
+float Damping;
 static float tangentialDamp = 7.0f;
 
 int NumParticles;
 
 int clothId;
+int clothDataIndex;
 
 Buffer<int> phase;
 
@@ -94,18 +95,20 @@ float Kden;
 #pragma kernel Setup
 [numthreads(THREADS, 1, 1)]
 void Setup(int id : SV_DispatchThreadID) {
+    if (id >= NumParticles)
+        return;
 
-    ClothData data = clothData[clothId];  
-    int nid = id + data.startIndex; 
+    if (phase[id] != clothId)
+        return;
 
-    Densities[nid] = 1000.0f;
-    Pressures[nid] = 10.0f;
+    Densities[id] = Kden;
+    Pressures[id] = 10.0f;
 }
 
 float3 Velocity(int i)
 {
 	float3 velocity = VelocitiesREAD[i].xyz;
-	velocity -= velocity * damping * DeltaT;
+	velocity -= velocity * Damping * DeltaT;
 	velocity += DeltaT * Gravity;
 	return velocity;
 }
@@ -115,33 +118,37 @@ float3 PredictedPosition(int i, float3 velocity)
 	return Positions[i].xyz + DeltaT * velocity;
 }
 
+bool IsPinnedClothNode(ClothData data, uint idx)
+{
+    uint start = (uint)data.startIndex;
+    return idx == start || idx == start + data.vertexColumn - (uint)1;
+}
+
 
 #pragma kernel PredictPositions
 [numthreads(THREADS, 1, 1)]
 void PredictPositions(int id : SV_DispatchThreadID) {
-    ClothData data = clothData[clothId];  
-    int nid = id;//+ data.startIndex; 
+    if (id >= NumParticles)
+        return;
+
+    ClothData data = clothData[clothDataIndex];
+    int nid = id;
     
     if (phase[nid] != clothId)
         return;
     
-    if (nid < NumParticles)
-	{
-        uint vertexColumn = data.vertexColumn;
-        uint vertexRow = data.vertexRow;
-        if (nid == data.startIndex 
-            || nid == data.startIndex + vertexColumn - 1 
-            //|| nid == data.startIndex + (vertexColumn * vertexRow) - 1 
-            //|| nid == data.startIndex + (vertexColumn * vertexRow) - vertexRow
-            ) {
-            return;
-        }
-		float3 velocity = Velocity(nid);
-		float3 predicted = PredictedPosition(nid, velocity);
+    if (IsPinnedClothNode(data, (uint)nid))
+    {
+        VelocitiesWRITE[nid] = float4(0, 0, 0, 0);
+        PredictedWRITE[nid] = Positions[nid];
+        return;
+    }
 
-		VelocitiesWRITE[nid] = float4(velocity, 0);
-		PredictedWRITE[nid] = float4(predicted, 0);
-	}
+	float3 velocity = Velocity(nid);
+	float3 predicted = PredictedPosition(nid, velocity);
+
+	VelocitiesWRITE[nid] = float4(velocity, 0);
+	PredictedWRITE[nid] = float4(predicted, 0);
 }
 
 
@@ -159,56 +166,48 @@ void SolveCollisions(int id : SV_DispatchThreadID) { }
 [numthreads(THREADS, 1, 1)]
 void UpdateVelocities(int id : SV_DispatchThreadID)
 {
-    ClothData data = clothData[clothId];
+    if (id >= NumParticles)
+        return;
+
+    ClothData data = clothData[clothDataIndex];
 
     if (phase[id] != clothId)
         return;
        
-    int nid = id;// + data.startIndex;
-       
-    uint vertexColumn = data.vertexColumn;
-    uint vertexRow = data.vertexRow;
-    if (nid == data.startIndex || nid == data.startIndex + vertexColumn - 1 
-        //|| nid == data.startIndex + (vertexColumn * vertexRow) - 1 
-        //|| nid == data.startIndex + (vertexColumn * vertexRow) - vertexRow 
-        ) {
+    int nid = id;
+
+    if (IsPinnedClothNode(data, (uint)nid))
+    {
+        VelocitiesWRITE[nid] = float4(0, 0, 0, 0);
         return;
     }
         
-	if (nid < NumParticles)
-	{
-		float4 p = Positions[nid];
-		float4 pi = PredictedREAD[nid];
+	float4 p = Positions[nid];
+	float4 pi = PredictedREAD[nid];
 
-		float4 velocity = (pi - p) / DeltaT;
+	float4 velocity = (pi - p) / DeltaT;
 
-		VelocitiesWRITE[nid] = velocity;
-	}
+	VelocitiesWRITE[nid] = velocity;
 }
 
 #pragma kernel UpdatePositions
 [numthreads(THREADS, 1, 1)]
 void UpdatePositions(int id : SV_DispatchThreadID)
 {
-    ClothData data = clothData[clothId];
+    if (id >= NumParticles)
+        return;
+
+    ClothData data = clothData[clothDataIndex];
    
     if (phase[id] != clothId)
         return;
 
-    int nid = id;//+ data.startIndex;
+    int nid = id;
 
-    uint vertexColumn = data.vertexColumn;
-    uint vertexRow = data.vertexRow;
-    if (nid == data.startIndex || nid == data.startIndex + vertexColumn - 1 
-        //|| nid == data.startIndex + (vertexColumn * vertexRow) - 1 
-        //|| nid == data.startIndex + (vertexColumn * vertexRow) - vertexRow 
-        ) {
+    if (IsPinnedClothNode(data, (uint)nid))
         return;
-    }
 
-	if (nid < NumParticles) {
-		Positions[nid] = PredictedREAD[nid];
-	}
+	Positions[nid] = PredictedREAD[nid];
 }
 
 
@@ -222,6 +221,9 @@ float3 SolveSpringForce(
     
     float3 delP = oPos - p; //position dx //force Direction 
     float dist = length(delP);
+    if (dist < 0.00001f)
+        return resultForce;
+
     float3 delV = oVel - v;
     
     float3 norm = normalize(delP);
@@ -242,31 +244,35 @@ float3 SolveSpringForce(
 [numthreads(8, 8, 1)]
 void NodeUpdate(uint3 id : SV_DispatchThreadID)
 {   
-    ClothData data = clothData[clothId];
+    ClothData data = clothData[clothDataIndex];
     uint vertexColumn = data.vertexColumn;
     uint vertexRow = data.vertexRow;
+    if (id.x >= vertexColumn || id.y >= vertexRow)
+        return;
+
     uint idx = mad(id.y, vertexColumn, id.x) + data.startIndex;
+    if (idx >= (uint)NumParticles)
+        return;
     
     if (phase[idx] != clothId)
         return;
     
     const uint3 nParticles = uint3(vertexColumn, vertexRow, 1);
+
+    if (IsPinnedClothNode(data, idx))
+    {
+        VelocitiesWRITE[idx] = float4(0, 0, 0, 0);
+        PredictedWRITE[idx] = Positions[idx];
+        return;
+    }
 	
-    const float3 p = float3(Positions[idx].xyz);
+    const float3 p = float3(PredictedREAD[idx].xyz);
     const float3 v = float3(VelocitiesREAD[idx].xyz);
     float3 force = float3(0,0,0);
     
     float RestLengthHoriz = data.RestLengthHoriz;
     float RestLengthVert = data.RestLengthVert;
     float RestLengthDiag = data.RestLengthDiag;
-    
-    if (idx == data.startIndex 
-        || idx == data.startIndex + vertexColumn - 1 
-        //|| idx == data.startIndex + (vertexColumn * vertexRow) - 1 
-        //|| idx == data.startIndex + (vertexColumn * vertexRow) - vertexRow
-        ) {
-        return;
-    }
     
     // Top
     if (id.y < nParticles.y - (uint) 1)
@@ -275,7 +281,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
         
             force += SolveSpringForce(force, p, v, 
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthVert);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthVert);
             /*
             delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
@@ -299,7 +305,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx - nParticles.x;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v,  
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthVert);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthVert);
             /*delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
             delV = (VelocitiesREAD[requestedId].xyz - v);
@@ -321,7 +327,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx - (uint) 1;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v,  
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthHoriz);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthHoriz);
             /*delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
             delV = (VelocitiesREAD[requestedId].xyz - v);
@@ -343,7 +349,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx + (uint) 1;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v, 
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthHoriz);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthHoriz);
             /*delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
             delV = (VelocitiesREAD[requestedId].xyz - v);
@@ -367,7 +373,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx + nParticles.x - (uint) 1;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v, 
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
             /*
             delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
@@ -390,7 +396,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx + nParticles.x + (uint) 1;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v, 
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
             /*
             delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
@@ -413,7 +419,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx - nParticles.x - (uint) 1;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v, 
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
             
             /*
             delP = Positions[requestedId].xyz - p; //position dx //force Direction 
@@ -437,7 +443,7 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
         uint requestedId = idx - nParticles.x + (uint) 1;
         if (requestedId >= data.startIndex && requestedId <= data.endIndex) {
             force += SolveSpringForce(force, p, v, 
-                Positions[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
+                PredictedREAD[requestedId].xyz, VelocitiesREAD[requestedId].xyz, RestLengthDiag);
             /*
             delP = Positions[requestedId].xyz - p; //position dx //force Direction 
             dist = length(delP);
@@ -458,16 +464,5 @@ void NodeUpdate(uint3 id : SV_DispatchThreadID)
 	float3 a = (force / nodeMass);
 	float4 newVel = float4(v + a * DeltaT, 0.0f);
     VelocitiesWRITE[idx] = newVel;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-    
-    float3 K1_Pos = newVel.xyz;
-    float3 K2_Pos = ((0.5f * DeltaT) * K1_Pos) * DeltaT;
-    float3 K3_Pos = ((0.5f * DeltaT) * K2_Pos) * DeltaT;
-    float3 K4_Pos = (p + (DeltaT * K3_Pos)) * DeltaT;
-    
-    // Write new step
-    float deformationSpeed = 0.16;
-    PredictedWRITE[idx] = float4(p + (deformationSpeed * (newVel.xyz + 2 * (K2_Pos + K3_Pos) + K4_Pos)) * DeltaT, 0.015625);
-    
-    // Update prevPosition
-    PredictedREAD[idx] = float4(p, 0.015625);
+    PredictedWRITE[idx] = float4(p + newVel.xyz * DeltaT, 0.015625);
 }

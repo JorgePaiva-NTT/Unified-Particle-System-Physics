@@ -37,10 +37,10 @@ namespace Assets.Scripts.GPU.Fluids
             var min = new Vector3(inf, inf, inf);
             var max = new Vector3(-inf, -inf, -inf);
             
-            var dx = bounds.size.x / (vertexRow - 1);
-            var dy = bounds.size.y / (vertexColumn - 1);
-            var structuralConstraint = Math.Max(dx, dy);
-            var shearConstraint = (float)Math.Sqrt(dx * dx + dy * dx);
+            var dx = bounds.size.x / (vertexColumn - 1);
+            var dz = bounds.size.z / (vertexRow - 1);
+            var structuralConstraint = Math.Max(dx, dz);
+            var shearConstraint = (float)Math.Sqrt(dx * dx + dz * dz);
             int i, j;
 
             var startingIndex = controller.Positions.Count;
@@ -55,12 +55,11 @@ namespace Assets.Scripts.GPU.Fluids
                     var pos =  offset + new Vector4(
                                   dx * j - bounds.size.x / 2,
                                   0.0f,
-                                  dy * i - bounds.size.y / 2);
+                                  dz * i - bounds.size.z / 2);
                     clothParticleNum++;
                     controller.Positions.Add(pos);
                     controller.Predicted.Add(pos);
-                    //TODO: Set cloth initial velocity
-                    controller.Velocities.Add(new Vector4(0, 0, 0));
+                    controller.Velocities.Add(new Vector4(initialVel.x, initialVel.y, initialVel.z, 0.0f));
 
                     controller.phaseArray.Add(id);
                     controller.Colors.Add(color);
@@ -94,9 +93,9 @@ namespace Assets.Scripts.GPU.Fluids
                 
                 bodyId = id,
                 
-                RestLengthDiag = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
+                RestLengthDiag = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dz, 2)),
                 RestLengthHoriz = dx,
-                RestLengthVert = dy,
+                RestLengthVert = dz,
 
                 vertexColumn = vertexColumn,
                 vertexRow = vertexRow,
